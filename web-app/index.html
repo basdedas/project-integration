@@ -1,11 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>index</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style type="text/css">
+        body {
+            background-image: url('Screenshot 2025-03-20 233750.png'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #box {
+            background-color: rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 300px; 
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left; 
+        }
+
+        select {
+           width: 100%; 
+           padding: 10px; 
+           border: 1px solid #ccc; 
+          border-radius: 4px; 
+          font-size: 16px; 
+          box-sizing: border-box; 
+         }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            height: 40px;
+            border-radius: 5px;
+            padding: 10px;
+            border: solid thin #aaa;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px;
+            width: 100%;
+            color: white;
+            background-color: #007BFF; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF; 
+            display: block;
+            margin-top: 15px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <p> Test text </p>
+
+<div id="box">
+    <div class="header">Login</div>
+    <div id="message"></div>
+    
+    <form id="loginForm">
+        <div class="form-group">
+        <label for="role">User/Admin:</label>
+        <select id="role" name="role" required>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit">Login</button>
+    </form>
+    
+    <p>Don't have an account? <a href="admin_user.html">Sign up</a></p>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const role = document.getElementById('role').value; // Get the selected role
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const messageDiv = document.getElementById('message');
+        
+        // Clear previous messages
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'success';
+                
+                // Store user info (in a real app, you'd store the JWT token)
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    if (role === 'admin') {
+                        window.location.href = 'admin_main.html';
+                    } else {
+                        window.location.href = 'user_main.html';
+                    }
+                }, 1000);
+            } else {
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'error';
+            }
+        } catch (err) {
+            messageDiv.textContent = 'An error occurred. Please try again.';
+            messageDiv.className = 'error';
+            console.error('Error:', err);
+        }
+    });
+</script>
 </body>
 </html>
