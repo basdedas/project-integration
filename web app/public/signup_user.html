@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .form-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5dc;
+            padding: 20px;
+        }
+        .form-content {
+            max-width: 400px;
+            width: 100%;
+            color: #333; 
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .form-group div {
+            width: 48%;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+        .background-image {
+            flex: 1;
+            background: url('Screenshot 2025-03-20 233750.png') no-repeat center center;
+            background-size: cover;
+        }
+        p {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="form-container">
+        <div class="form-content">
+            <h1>Create an Account</h1>
+            <div id="message"></div>
+            
+            <form id="signupForm">
+                <div class="form-group">
+                    <div>
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div>
+                        <label for="confirm-password">Confirm Password:</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="birthday">Birthday:</label>
+                        <input type="date" id="birthday" name="birthday" required>
+                    </div>
+                    <div>
+                        <label for="height">Height (cm):</label>
+                        <input type="number" id="height" name="height" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" required>
+                    </div>
+                    <div>
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="phonenumber">Phone Number:</label>
+                        <input type="tel" id="phonenumber" name="phonenumber" required>
+                    </div>
+                    <div>
+                        <label for="contact">Emergency Contact:</label>
+                        <input type="tel" id="contact" name="contact" required>
+                    </div>
+                </div>
+
+
+               <div class="form-group">
+                    <div>
+                        <label for="doctor_id">Doctor ID:</label>
+                        <select id="doctor_id" name="doctor_id" required>
+                        <option value= "">Select Doctor </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="institution">Institution Name:</label>
+                        <select id="institution" name="instituition" required>
+                            <option value="">Select Institution</option>
+                    </div>
+                </div>
+
+
+                <button type="submit">Create Account</button>
+            </form>
+            
+            <p>Already have an account? <a href="login.html">Log in</a></p>
+        </div>
+    </div>
+    
+    <script>
+       <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const institutionsResponse = await fetch('http://localhost:3000/api/institutions');
+            const institutions = await institutionsResponse.json();
+            
+            const institutionSelect = document.getElementById('institution');
+            institutions.forEach(inst => {
+                const option = document.createElement('option');
+                option.value = inst.id; // or appropriate field
+                option.textContent = inst.name; // or appropriate field
+                institutionSelect.appendChild(option);
+            });
+
+            const doctorsResponse = await fetch('http://localhost:3000/api/doctors');
+            const doctors = await doctorsResponse.json();
+            
+            const doctorSelect = document.getElementById('doctor_id');
+            doctors.forEach(doc => {
+                const option = document.createElement('option');
+                option.value = doc.id; // or appropriate field
+                option.textContent = doc.name; // or appropriate field
+                doctorSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const birthday = document.getElementById('birthday').value;
+        const height = document.getElementById('height').value;
+        const weight = document.getElementById('weight').value;
+        const gender = document.getElementById('gender').value;
+        const phonenumber = document.getElementById('phonenumber').value;
+        const institution = document.getElementById('institution').value;
+        const doctor_id = document.getElementById('doctor_id').value;
+        const messageDiv = document.getElementById('message');
+        
+        // Clear previous messages
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        
+        // Validate password match
+        if (password !== confirmPassword) {
+            messageDiv.textContent = 'Passwords do not match';
+            messageDiv.className = 'error';
+            return;
+        }
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password, birthday, height, weight, gender, phonenumber, institution, doctor_id })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'success';
+                document.getElementById('signupForm').reset();
+                
+                // Redirect to login page after successful signup
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'error';
+            }
+        } catch (err) {
+            messageDiv.textContent = 'An error occurred. Please try again.';
+            messageDiv.className = 'error';
+            console.error('Error:', err);
+        }
+    });
+
+    </script>
+</body>
+</html>
