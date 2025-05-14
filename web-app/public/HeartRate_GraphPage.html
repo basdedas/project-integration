@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heart Rate Detail</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #f1fafe, #ffffff);
+      color: #333;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .time-buttons {
+      margin: 20px 0;
+    }
+    .time-buttons button {
+      margin-right: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #64b5f6;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .time-buttons button:hover {
+      background-color: #42a5f5;
+    }
+    .charts {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    canvas {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+    .summary {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 20px;
+    }
+    .summary-item {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 12px;
+      flex: 1;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .summary-item h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .summary-item p {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .message-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .normal {
+      color: #2e7d32;
+    }
+    .alert {
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <h1>Heart Rate History</h1>
+  <p>Visualize your heart rate measurements across time periods.</p>
+
+  <div class="time-buttons">
+    <button onclick="updateChart('day')">Day</button>
+    <button onclick="updateChart('week')">Week</button>
+    <button onclick="updateChart('month')">Month</button>
+  </div>
+
+  <div class="charts">
+    <canvas id="mainChart"></canvas>
+    <canvas id="averageChart"></canvas>
+  </div>
+
+  <div class="summary">
+    <div class="summary-item">
+      <h3>Average Heart Rate</h3>
+      <p id="avg-val">--</p>
+    </div>
+    <div class="summary-item">
+      <h3>Minimum Heart Rate</h3>
+      <p id="min-val">--</p>
+    </div>
+    <div class="summary-item">
+      <h3>Maximum Heart Rate</h3>
+      <p id="max-val">--</p>
+    </div>
+  </div>
+
+  <div class="message-box" id="status-msg">
+    Loading status...
+  </div>
+
+  <script>
+    const mainCtx = document.getElementById('mainChart').getContext('2d');
+    const avgCtx = document.getElementById('averageChart').getContext('2d');
+
+    let mainChart, avgChart;
+
+    function generateData(type) {
+      if (type === 'day') {
+        return {
+          labels: [...Array(24).keys()].map(h => `${h}:00`),
+          data: Array.from({length: 24}, () => 60 + Math.floor(Math.random() * 40))
+        };
+      } else if (type === 'week') {
+        return {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: Array.from({length: 7}, () => 60 + Math.floor(Math.random() * 40))
+        };
+      } else {
+        return {
+          labels: [...Array(30).keys()].map(d => `Day ${d+1}`),
+          data: Array.from({length: 30}, () => 60 + Math.floor(Math.random() * 40))
+        };
+      }
+    }
+
+    function updateChart(type) {
+      const { labels, data } = generateData(type);
+
+      const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+
+      document.getElementById("avg-val").innerText = `${avg} bpm`;
+      document.getElementById("min-val").innerText = `${min} bpm`;
+      document.getElementById("max-val").innerText = `${max} bpm`;
+
+      const statusMsg = document.getElementById("status-msg");
+      if (avg < 60 || avg > 100) {
+        statusMsg.innerText = "⚠️ Warning: Please contact your doctor ASAP!";
+        statusMsg.className = "message-box alert";
+      } else {
+        statusMsg.innerText = "✅ Your heart rate looks really good :)";
+        statusMsg.className = "message-box normal";
+      }
+
+      if (mainChart) mainChart.destroy();
+      if (avgChart) avgChart.destroy();
+
+      mainChart = new Chart(mainCtx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Heart Rate (bpm)',
+            data,
+            borderColor: '#ef5350',
+            backgroundColor: 'rgba(239, 83, 80, 0.15)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Heart Rate Over Time' }
+          }
+        }
+      });
+
+      avgChart = new Chart(avgCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Average Heart Rate'],
+          datasets: [{
+            label: 'Average',
+            data: [avg],
+            backgroundColor: '#81c784'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Average Heart Rate' }
+          },
+          scales: {
+            x: { min: 0, max: 140 }
+          }
+        }
+      });
+    }
+
+    updateChart('day');
+  </script>
+</body>
+</html>
