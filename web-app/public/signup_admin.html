@@ -151,10 +151,11 @@
             try {
                 const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/signup/admin', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, user, email, password })
+                    body: JSON.stringify({ institution, username, email, password })
                 });
                 
                 const data = await response.json();
