@@ -155,7 +155,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ institution, username, email, password })
+                    body: JSON.stringify({ name, user, email, password })
                 });
                 
                 const data = await response.json();
