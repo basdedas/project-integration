@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steps History</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #f0f9ff, #ffffff);
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      background-color: #e3f2fd;
+      border: none;
+      padding: 10px 20px;
+      margin-right: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .tabs button:hover {
+      background-color: #bbdefb;
+    }
+    .card-box {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .card-box:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Steps History</h1>
+    <p>Track your daily, weekly, or monthly step count over time.</p>
+    <div class="tabs">
+      <button onclick="loadData('day')">Day</button>
+      <button onclick="loadData('week')">Week</button>
+      <button onclick="loadData('month')">Month</button>
+    </div>
+    <div class="card-box">
+      <canvas id="stepsChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('stepsChart').getContext('2d');
+    let stepsChart = new Chart(ctx, {
+      type: 'line',
+      data: {},
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    const datasets = {
+      day: {
+        labels: Array.from({length: 30}, (_, i) => `Day ${i+1}`),
+        data: Array.from({length: 30}, () => Math.floor(Math.random() * 10000))
+      },
+      week: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        data: [40000, 45000, 38000, 42000]
+      },
+      month: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        data: [150000, 160000, 145000, 170000, 180000]
+      }
+    };
+
+    function loadData(period) {
+      const selected = datasets[period];
+      stepsChart.data.labels = selected.labels;
+      stepsChart.data.datasets = [{
+        label: 'Steps',
+        data: selected.data,
+        fill: true,
+        backgroundColor: 'rgba(33, 150, 243, 0.2)',
+        borderColor: '#2196f3',
+        tension: 0.3,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }];
+      stepsChart.update();
+    }
+
+    loadData('day');
+  </script>
+</body>
+</html>

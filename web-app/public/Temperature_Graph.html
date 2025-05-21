@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature History</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #f0f9ff, #ffffff);
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      background-color: #ffe0b2;
+      border: none;
+      padding: 10px 20px;
+      margin-right: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .tabs button:hover {
+      background-color: #ffcc80;
+    }
+    .card-box {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .card-box:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Temperature History</h1>
+    <p>Track the temperature .</p>
+    <div class="tabs">
+      <button onclick="loadData('day')">Day</button>
+      <button onclick="loadData('week')">Week</button>
+      <button onclick="loadData('month')">Month</button>
+    </div>
+    <div class="card-box">
+      <canvas id="temperatureChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    let temperatureChart = new Chart(ctx, {
+      type: 'line',
+      data: {},
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            suggestedMin: 34,
+            suggestedMax: 39
+          }
+        }
+      }
+    });
+
+    const datasets = {
+      day: {
+        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+        data: Array.from({length: 24}, () => (36 + Math.random() * 1.5).toFixed(1))
+      },
+      week: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        data: Array.from({length: 7}, () => (36 + Math.random() * 1.5).toFixed(1))
+      },
+      month: {
+        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
+        data: Array.from({length: 30}, () => (36 + Math.random() * 1.5).toFixed(1))
+      }
+    };
+
+    function loadData(period) {
+      const selected = datasets[period];
+      temperatureChart.data.labels = selected.labels;
+      temperatureChart.data.datasets = [{
+        label: 'Temperature (°C)',
+        data: selected.data,
+        fill: true,
+        backgroundColor: 'rgba(255, 152, 0, 0.2)',
+        borderColor: '#ff9800',
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }];
+      temperatureChart.update();
+    }
+
+    loadData('day');
+  </script>
+</body>
+</html>
