@@ -149,14 +149,17 @@
       margin-bottom: 10px;
       color: #388e3c;
     }
+    a.card {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <div class="top-bar">
       <div>
-		<h1>Welcome,User</h1>
-        <h3>Health Overview</h3>
+        <h1>Health Overview</h1>
         <p>May 12, 2025</p>
       </div>
       <div class="icons">
@@ -166,11 +169,11 @@
 
     <div class="main-section">
       <div class="left-cards">
-        <div class="card" style="background: #ffe5ec;">
+        <a href="HeartRate_GraphPage.html" class="card" style="background: #ffe5ec;">
           <h3>Heart Rate</h3>
           <div class="value">78 <span style="font-size: 16px;">bpm</span></div>
           <div class="status">Normal</div>
-        </div>
+        </a>
         <div class="card" style="background: #e0f7fa;">
           <h3>Steps</h3>
           <div class="value">400</div>
