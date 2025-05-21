@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Oxygen History</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #e3f2fd, #ffffff);
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin-bottom: 20px;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      background-color: #e0f7fa;
+      border: none;
+      padding: 10px 20px;
+      margin-right: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+    .tabs button:hover {
+      background-color: #b2ebf2;
+    }
+    .card-box {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+    .card-box:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Blood Oxygen History</h1>
+    <p>Track your SpO₂ levels daily, weekly, and monthly.</p>
+    <div class="tabs">
+      <button onclick="loadData('day')">Day</button>
+      <button onclick="loadData('week')">Week</button>
+      <button onclick="loadData('month')">Month</button>
+    </div>
+    <div class="card-box">
+      <canvas id="oxygenChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('oxygenChart').getContext('2d');
+    let oxygenChart = new Chart(ctx, {
+      type: 'line',
+      data: {},
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: context => `SpO₂: ${context.parsed.y}%`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            suggestedMin: 85,
+            suggestedMax: 100
+          }
+        }
+      }
+    });
+
+    const datasets = {
+      day: {
+        labels: [...Array(24).keys()].map(h => `${h}:00`),
+        data: Array.from({length: 24}, () => 90 + Math.floor(Math.random() * 10))
+      },
+      week: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: Array.from({length: 7}, () => 92 + Math.floor(Math.random() * 6))
+      },
+      month: {
+        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
+        data: Array.from({length: 30}, () => 91 + Math.floor(Math.random() * 7))
+      }
+    };
+
+    function loadData(period) {
+      const selected = datasets[period];
+      oxygenChart.data.labels = selected.labels;
+      oxygenChart.data.datasets = [{
+        label: 'Blood Oxygen (%)',
+        data: selected.data,
+        fill: true,
+        backgroundColor: 'rgba(0, 188, 212, 0.2)',
+        borderColor: '#00bcd4',
+        tension: 0.3,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }];
+      oxygenChart.update();
+    }
+
+    loadData('day');
+  </script>
+</body>
+</html>

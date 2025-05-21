@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medications</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #e0f7fa, #ffffff);
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #26a69a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00796b;
+    }
+    .med-list {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .med-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .med-item:last-child {
+      border-bottom: none;
+    }
+    .med-item span {
+      display: block;
+    }
+    .med-info {
+      flex: 1;
+    }
+    .remove-btn {
+      background: #e57373;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .remove-btn:hover {
+      background: #c62828;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Manage Your Medications</h1>
+
+  <form id="medForm">
+    <label for="medName">Medication Name:</label>
+    <input type="text" id="medName" required />
+
+    <label for="medDose">Dosage:</label>
+    <input type="text" id="medDose" required />
+
+    <label for="medTime">Alarm Time (HH:MM):</label>
+    <input type="time" id="medTime" required />
+
+    <button type="submit">Add Medication</button>
+  </form>
+
+  <div class="med-list" id="medicationsContainer"></div>
+
+  <script>
+    const medForm = document.getElementById('medForm');
+    const medContainer = document.getElementById('medicationsContainer');
+
+    let meds = JSON.parse(localStorage.getItem('medications')) || [];
+
+    function renderMedications() {
+      medContainer.innerHTML = '';
+      meds.forEach((med, index) => {
+        const timeLeft = getTimeUntil(med.time);
+        const div = document.createElement('div');
+        div.className = 'med-item';
+        div.innerHTML = `
+          <div class="med-info">
+            <span><strong>${med.name}</strong> (${med.dose})</span>
+            <span>Alarm: ${med.time}</span>
+            <span>⏰ Time left: ${timeLeft}</span>
+          </div>
+          <button class="remove-btn" onclick="removeMed(${index})">Remove</button>
+        `;
+        medContainer.appendChild(div);
+      });
+    }
+
+    function getTimeUntil(targetTime) {
+      const now = new Date();
+      const [h, m] = targetTime.split(':');
+      const target = new Date();
+      target.setHours(h, m, 0, 0);
+
+      if (target < now) target.setDate(target.getDate() + 1); // next day
+
+      const diff = Math.floor((target - now) / 60000);
+      const hours = Math.floor(diff / 60);
+      const minutes = diff % 60;
+      return `${hours}h ${minutes}m`;
+    }
+
+    function removeMed(index) {
+      meds.splice(index, 1);
+      localStorage.setItem('medications', JSON.stringify(meds));
+      renderMedications();
+    }
+
+    medForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('medName').value;
+      const dose = document.getElementById('medDose').value;
+      const time = document.getElementById('medTime').value;
+      meds.push({ name, dose, time });
+      localStorage.setItem('medications', JSON.stringify(meds));
+      medForm.reset();
+      renderMedications();
+    });
+
+    renderMedications();
+  </script>
+
+</body>
+</html>

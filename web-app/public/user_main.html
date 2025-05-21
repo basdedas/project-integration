@@ -175,20 +175,20 @@
           <div class="status">Normal</div>
         </a>
        <a href="StepCount_GraphPage.html" class="card" style="background: #e0f7fa;">
-  <h3>Steps</h3>
-  <div class="value">400</div>
-  <div class="status">Normal</div>
-</a>
-        <div class="card" style="background: #fff3e0;">
+       <h3>Steps</h3>
+      <div class="value">400</div>
+      <div class="status">Normal</div>
+      </a>
+        <a href="Temperature_Graph.html" class="card" style="background: #fff3e0;">
           <h3>Temperature</h3>
           <div class="value">36.7 <span style="font-size: 16px;">°C</span></div>
           <div class="status">Normal</div>
-        </div>
-        <div class="card" style="background: #e8f5e9;">
+      </a>
+        <a href="BloodOxygen_Graph.html" class="card" style="background: #e8f5e9;">
           <h3>Blood Oxygen</h3>
           <div class="value">97%</div>
           <div class="status">Normal</div>
-        </div>
+        </a>
       </div>
 
       <div class="circle-section">
@@ -211,12 +211,50 @@
       <div class="appointment">
         <strong>Upcoming Appointment:</strong><br> August 14, 2025 – Consultation with Dr. James
       </div>
-      <div class="medications">
-        <h2>Medications</h2>
-        <p>Paracetamol – Time left: 2h 15m</p>
-        <p>Ibuprofen – Time left: 5h 00m</p>
-      </div>
+      <a href="Medications.html" class="medications" style="text-decoration: none; color: inherit;">
+  <h2>Medications</h2>
+  <div id="medList">
+    <p>Loading...</p>
+  </div>
+</a>
+
+      
     </div>
   </div>
+  <script>
+  function renderMedicationsInBubble() {
+    const medList = document.getElementById('medList');
+    const meds = JSON.parse(localStorage.getItem('medications')) || [];
+
+    if (meds.length === 0) {
+      medList.innerHTML = '<p>No medications added.</p>';
+      return;
+    }
+
+    medList.innerHTML = '';
+    meds.forEach(med => {
+      const timeLeft = getTimeUntil(med.time);
+      const p = document.createElement('p');
+      p.style.margin = "5px 0";
+      p.textContent = `${med.name} – ${timeLeft}`;
+      medList.appendChild(p);
+    });
+  }
+
+  function getTimeUntil(targetTime) {
+    const now = new Date();
+    const [h, m] = targetTime.split(':');
+    const target = new Date();
+    target.setHours(h, m, 0, 0);
+    if (target < now) target.setDate(target.getDate() + 1);
+    const diff = Math.floor((target - now) / 60000);
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
+    return `${hours}h ${minutes}m`;
+  }
+
+  renderMedicationsInBubble();
+</script>
+
 </body>
 </html>
