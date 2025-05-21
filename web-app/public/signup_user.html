@@ -169,11 +169,10 @@
         </div>
     </div>
     
-    
-       <script>
+    <script>
     document.addEventListener('DOMContentLoaded', async () => {
         try {
-            const institutionsResponse = await fetch('http://localhost:3000/api/institutions');
+            const institutionsResponse = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/institutions');
             const institutions = await institutionsResponse.json();
             
             const institutionSelect = document.getElementById('institution');
@@ -184,15 +183,19 @@
                 institutionSelect.appendChild(option);
             });
 
-            const doctorsResponse = await fetch('http://localhost:3000/api/doctors');
-            const doctors = await doctorsResponse.json();
-            
-            const doctorSelect = document.getElementById('doctor_id');
-            doctors.forEach(doc => {
-                const option = document.createElement('option');
-                option.value = doc.id; // or appropriate field
-                option.textContent = doc.name; // or appropriate field
-                doctorSelect.appendChild(option);
+            institutionSelect.addEventListener('change', async (e) => {
+                const institutionId = e.target.value;
+                const doctorsResponse = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/admins/${institutionId}`);
+                const doctors = await doctorsResponse.json();
+                
+                const doctorSelect = document.getElementById('doctor_id');
+                doctorSelect.innerHTML = '<option value="">Select Doctor</option>'; // Clear previous options
+                doctors.forEach(doc => {
+                    const option = document.createElement('option');
+                    option.value = doc.name;
+                    option.textContent = doc.email;
+                    doctorSelect.appendChild(option);
+                });
             });
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -227,7 +230,7 @@
         }
         
         try {
-            const response = await fetch('http://localhost:3000/api/signup', {
+            const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/signup/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
