@@ -160,7 +160,8 @@
     <div class="top-bar">
       <div>
         <h1>Health Overview</h1>
-        <p>May 12, 2025</p>
+        <p id="current-date">Loading date...</p>
+
       </div>
       <div class="icons">
         🔍 🔔 ⚙️
@@ -236,25 +237,52 @@
       const timeLeft = getTimeUntil(med.time);
       const p = document.createElement('p');
       p.style.margin = "5px 0";
-      p.textContent = `${med.name} – ${timeLeft}`;
+      p.textContent = `${med.name} – in ${timeLeft}`;
       medList.appendChild(p);
     });
   }
+  
 
   function getTimeUntil(targetTime) {
-    const now = new Date();
+    // Create Europe/Amsterdam timezone
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
     const [h, m] = targetTime.split(':');
-    const target = new Date();
+    const target = new Date(now);
     target.setHours(h, m, 0, 0);
-    if (target < now) target.setDate(target.getDate() + 1);
+
+    if (target < now) {
+      target.setDate(target.getDate() + 1); // move to next day if already passed
+    }
+
     const diff = Math.floor((target - now) / 60000);
     const hours = Math.floor(diff / 60);
     const minutes = diff % 60;
+
     return `${hours}h ${minutes}m`;
   }
 
   renderMedicationsInBubble();
+
+  // Refresh every minute
+  setInterval(renderMedicationsInBubble, 60000);
 </script>
+<script>
+  function renderDateInNL() {
+    const now = new Date();
+    const nlDate = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Amsterdam',
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(now);
+
+    document.getElementById('current-date').textContent = nlDate;
+  }
+
+  renderDateInNL();
+</script>
+
 
 </body>
 </html>
