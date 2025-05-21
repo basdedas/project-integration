@@ -178,8 +178,8 @@
             const institutionSelect = document.getElementById('institution');
             institutions.forEach(inst => {
                 const option = document.createElement('option');
-                option.value = inst.id; // or appropriate field
-                option.textContent = inst.name; // or appropriate field
+                option.value = inst.institution;
+                option.textContent = inst.institution;
                 institutionSelect.appendChild(option);
             });
 
@@ -192,7 +192,7 @@
                 doctorSelect.innerHTML = '<option value="">Select Doctor</option>'; // Clear previous options
                 doctors.forEach(doc => {
                     const option = document.createElement('option');
-                    option.value = doc.name;
+                    option.value = doc.email;
                     option.textContent = doc.email;
                     doctorSelect.appendChild(option);
                 });
