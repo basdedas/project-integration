@@ -230,15 +230,16 @@ function fetchUsername() {
 
     window.onload = fetchUsername; 
 
+
     async function fetchHeartRate() {
   try {
-    const response = await fetch('/api/heart-rate');
+    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/heart-rate');
     if (!response.ok) {
       throw new Error('Failed to fetch heart rate');
     }
     const data = await response.json();
     document.querySelector('.value').textContent = `${data.heartRate} bpm`;
-    document.querySelector('.status').textContent = data.heartRate < 100 ? 'Normal' : 'High'; // Example status logic
+    document.querySelector('.status').textContent = data.heartRate < 100 ? 'Normal' : 'High'; 
   } catch (error) {
     console.error('Error:', error);
     document.querySelector('.value').textContent = 'N/A';
