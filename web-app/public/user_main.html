@@ -159,7 +159,7 @@
     <div class="top-bar">
       <div>
         <h1>Health Overview</h1>
-        <p id="welcome-message">Welcome, <span id="username">User</span>!</p>
+        <p id="welcome-message">Welcome, <span id="username"></span>!</p>
         <p id="current-date">Loading date...</p>
       </div>
       <div class="icons">
@@ -221,10 +221,15 @@
   </div>
 
   <script>
-    function fetchUsername() {
-      const username = localStorage.getItem('username') || 'User'; // Default to 'User' if not found
-      document.getElementById('username').textContent = username;
+    
+function fetchUsername() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const username = user ? user.username : 'User'; // Default to 'User' if not found
+        document.getElementById('username').textContent = username;
     }
+
+    window.onload = fetchUsername; // Call when the page loads
+
 
     window.onload = function() {
       fetchUsername();
