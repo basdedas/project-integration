@@ -119,86 +119,78 @@
     Loading status...
   </div>
 
-  <script>
-    const ctx = document.getElementById('heartChart').getContext('2d');
-    let heartChart;
+  
 
-    function generateData(type) {
-      if (type === 'day') {
-        return {
-          labels: [...Array(24).keys()].map(h => `${h}:00`),
-          data: Array.from({ length: 24 }, () => 60 + Math.floor(Math.random() * 40))
-        };
-      } else if (type === 'week') {
-        return {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          data: Array.from({ length: 7 }, () => 60 + Math.floor(Math.random() * 40))
-        };
-      } else {
-        return {
-          labels: [...Array(30).keys()].map(d => `Day ${d+1}`),
-          data: Array.from({ length: 30 }, () => 60 + Math.floor(Math.random() * 40))
-        };
-      }
+  <script>
+    async function fetchHeartRateData(type) {
+  const response = await fetch(`/api/heart-rate?type=${type}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+}
+
+async function updateChart(type) {
+  try {
+    const { labels, data } = await fetchHeartRateData(type);
+
+    const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+
+    document.getElementById("avg-val").innerText = `${avg} bpm`;
+    document.getElementById("min-val").innerText = `${min} bpm`;
+    document.getElementById("max-val").innerText = `${max} bpm`;
+
+    const status = document.getElementById("status-msg");
+    if (avg < 60 || avg > 100) {
+      status.innerHTML = '⚠️ Please contact your doctor ASAP!';
+      status.className = 'status-box alert';
+    } else {
+      status.innerHTML = '✅ Your heart rate looks really good :)';
+      status.className = 'status-box normal';
     }
 
-    function updateChart(type) {
-      const { labels, data } = generateData(type);
+    if (heartChart) heartChart.destroy();
 
-      const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
-      const min = Math.min(...data);
-      const max = Math.max(...data);
-
-      document.getElementById("avg-val").innerText = `${avg} bpm`;
-      document.getElementById("min-val").innerText = `${min} bpm`;
-      document.getElementById("max-val").innerText = `${max} bpm`;
-
-      const status = document.getElementById("status-msg");
-      if (avg < 60 || avg > 100) {
-        status.innerHTML = '⚠️ Please contact your doctor ASAP!';
-        status.className = 'status-box alert';
-      } else {
-        status.innerHTML = '✅ Your heart rate looks really good :)';
-        status.className = 'status-box normal';
-      }
-
-      if (heartChart) heartChart.destroy();
-
-      heartChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Heart Rate (bpm)',
-            data,
-            fill: true,
-            borderColor: '#ef5350',
-            backgroundColor: 'rgba(239, 83, 80, 0.1)',
-            pointBackgroundColor: '#ef5350',
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: context => `Heart Rate: ${context.parsed.y} bpm`
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: false,
-              suggestedMax: 120
+    heartChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Heart Rate (bpm)',
+          data,
+          fill: true,
+          borderColor: '#ef5350',
+          backgroundColor: 'rgba(239, 83, 80, 0.1)',
+          pointBackgroundColor: '#ef5350',
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: context => `Heart Rate: ${context.parsed.y} bpm`
             }
           }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            suggestedMax: 120
+          }
         }
-      });
-    }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching heart rate data:', error);
+  }
+}
 
-    updateChart('day');
+updateChart('day');
   </script>
 </body>
 </html>
