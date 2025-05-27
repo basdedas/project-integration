@@ -118,7 +118,6 @@
     .steps-bar { --value: 40; --color: #3f51b5; }
     .water-bar { --value: 50; --color: #03a9f4; }
     .calories-bar { --value: 60; --color: #ffc107; }
-
     .footer-section {
       margin-top: 40px;
       display: flex;
@@ -160,8 +159,8 @@
     <div class="top-bar">
       <div>
         <h1>Health Overview</h1>
+        <p id="welcome-message">Welcome, <span id="username">User</span>!</p>
         <p id="current-date">Loading date...</p>
-
       </div>
       <div class="icons">
         🔍 🔔 ⚙️
@@ -175,16 +174,16 @@
           <div class="value">78 <span style="font-size: 16px;">bpm</span></div>
           <div class="status">Normal</div>
         </a>
-       <a href="StepCount_GraphPage.html" class="card" style="background: #e0f7fa;">
-       <h3>Steps</h3>
-      <div class="value">400</div>
-      <div class="status">Normal</div>
-      </a>
+        <a href="StepCount_GraphPage.html" class="card" style="background: #e0f7fa;">
+          <h3>Steps</h3>
+          <div class="value">400</div>
+          <div class="status">Normal</div>
+        </a>
         <a href="Temperature_Graph.html" class="card" style="background: #fff3e0;">
           <h3>Temperature</h3>
           <div class="value">36.7 <span style="font-size: 16px;">°C</span></div>
           <div class="status">Normal</div>
-      </a>
+        </a>
         <a href="BloodOxygen_Graph.html" class="card" style="background: #e8f5e9;">
           <h3>Blood Oxygen</h3>
           <div class="value">97%</div>
@@ -213,76 +212,77 @@
         <strong>Upcoming Appointment:</strong><br> August 14, 2025 – Consultation with Dr. James
       </div>
       <a href="Medications.html" class="medications" style="text-decoration: none; color: inherit;">
-  <h2>Medications</h2>
-  <div id="medList">
-    <p>Loading...</p>
-  </div>
-</a>
-
-      
+        <h2>Medications</h2>
+        <div id="medList">
+          <p>Loading...</p>
+        </div>
+      </a>
     </div>
   </div>
+
   <script>
-  function renderMedicationsInBubble() {
-    const medList = document.getElementById('medList');
-    const meds = JSON.parse(localStorage.getItem('medications')) || [];
-
-    if (meds.length === 0) {
-      medList.innerHTML = '<p>No medications added.</p>';
-      return;
+    function fetchUsername() {
+      const username = localStorage.getItem('username') || 'User'; // Default to 'User' if not found
+      document.getElementById('username').textContent = username;
     }
 
-    medList.innerHTML = '';
-    meds.forEach(med => {
-      const timeLeft = getTimeUntil(med.time);
-      const p = document.createElement('p');
-      p.style.margin = "5px 0";
-      p.textContent = `${med.name} – in ${timeLeft}`;
-      medList.appendChild(p);
-    });
-  }
-  
+    window.onload = function() {
+      fetchUsername();
+      renderDateInNL();
+      renderMedicationsInBubble();
+    };
 
-  function getTimeUntil(targetTime) {
-    // Create Europe/Amsterdam timezone
-    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
-    const [h, m] = targetTime.split(':');
-    const target = new Date(now);
-    target.setHours(h, m, 0, 0);
+    function renderMedicationsInBubble() {
+      const medList = document.getElementById('medList');
+      const meds = JSON.parse(localStorage.getItem('medications')) || [];
 
-    if (target < now) {
-      target.setDate(target.getDate() + 1); // move to next day if already passed
+      if (meds.length === 0) {
+        medList.innerHTML = '<p>No medications added.</p>';
+        return;
+      }
+
+      medList.innerHTML = '';
+      meds.forEach(med => {
+        const timeLeft = getTimeUntil(med.time);
+        const p = document.createElement('p');
+        p.style.margin = "5px 0";
+        p.textContent = `${med.name} – in ${timeLeft}`;
+        medList.appendChild(p);
+      });
     }
 
-    const diff = Math.floor((target - now) / 60000);
-    const hours = Math.floor(diff / 60);
-    const minutes = diff % 60;
+    function getTimeUntil(targetTime) {
+      const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
+      const [h, m] = targetTime.split(':');
+      const target = new Date(now);
+      target.setHours(h, m, 0, 0);
 
-    return `${hours}h ${minutes}m`;
-  }
+      if (target < now) {
+        target.setDate(target.getDate() + 1); // move to next day if already passed
+      }
 
-  renderMedicationsInBubble();
+      const diff = Math.floor((target - now) / 60000);
+      const hours = Math.floor(diff / 60);
+      const minutes = diff % 60;
 
-  // Refresh every minute
-  setInterval(renderMedicationsInBubble, 60000);
-</script>
-<script>
-  function renderDateInNL() {
-    const now = new Date();
-    const nlDate = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Europe/Amsterdam',
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(now);
+      return `${hours}h ${minutes}m`;
+    }
 
-    document.getElementById('current-date').textContent = nlDate;
-  }
+    function renderDateInNL() {
+      const now = new Date();
+      const nlDate = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Amsterdam',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(now);
 
-  renderDateInNL();
-</script>
+      document.getElementById('current-date').textContent = nlDate;
+    }
 
-
+    renderDateInNL();
+    renderMedicationsInBubble();
+  </script>
 </body>
 </html>
