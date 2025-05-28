@@ -161,15 +161,15 @@
     try {
       const { date, health_type } = await fetchHeartRateData(type);
 
-      updateSummaryStats(data);
-      renderChart(labels, data);
+      updateSummaryStats(date);
+      renderChart(health_type, date);
     } catch (error) {
       console.error('Error fetching heart rate data:', error);
 
       // fallback to generated data
-      const { labels, data } = generateRandomData(type);
-      updateSummaryStats(data);
-      renderChart(labels, data);
+      const { health_type, date } = generateRandomData(type);
+      updateSummaryStats(date);
+      renderChart(health_type, date);
     }
   }
 
