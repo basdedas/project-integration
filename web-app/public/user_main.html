@@ -118,6 +118,7 @@
     .steps-bar { --value: 40; --color: #3f51b5; }
     .water-bar { --value: 50; --color: #03a9f4; }
     .calories-bar { --value: 60; --color: #ffc107; }
+
     .footer-section {
       margin-top: 40px;
       display: flex;
@@ -177,9 +178,9 @@
   <div class="dashboard">
     <div class="top-bar">
       <div>
-        <h1>Health Overview</h1>
-        <p id="welcome-message">Welcome, <span id="username"></span>!</p>
+       <h1>Health Overview</h1>
         <p id="current-date">Loading date...</p>
+
       </div>
       <div class="icons">
         🔍 🔔 ⚙️
@@ -193,16 +194,16 @@
           <div class="value">78 <span style="font-size: 16px;">bpm</span></div>
           <div class="status">Normal</div>
         </a>
-        <a href="StepCount_GraphPage.html" class="card" style="background: #e0f7fa;">
-          <h3>Steps</h3>
-          <div class="value">400</div>
-          <div class="status">Normal</div>
-        </a>
+       <a href="StepCount_GraphPage.html" class="card" style="background: #e0f7fa;">
+       <h3>Steps</h3>
+      <div class="value">400</div>
+      <div class="status">Normal</div>
+      </a>
         <a href="Temperature_Graph.html" class="card" style="background: #fff3e0;">
           <h3>Temperature</h3>
           <div class="value">36.7 <span style="font-size: 16px;">°C</span></div>
           <div class="status">Normal</div>
-        </a>
+      </a>
         <a href="BloodOxygen_Graph.html" class="card" style="background: #e8f5e9;">
           <h3>Blood Oxygen</h3>
           <div class="value">97%</div>
@@ -249,97 +250,70 @@
         <strong>Upcoming Appointment:</strong><br> August 14, 2025 – Consultation with Dr. James
       </div>
       <a href="Medications.html" class="medications" style="text-decoration: none; color: inherit;">
-        <h2>Medications</h2>
-        <div id="medList">
-          <p>Loading...</p>
-        </div>
-      </a>
+  <h2>Medications</h2>
+  <div id="medList">
+    <p>Loading...</p>
+  </div>
+</a>
+
+      
     </div>
   </div>
+<script>
+  function renderMedicationsInBubble() {
+    const medList = document.getElementById('medList');
+    const meds = JSON.parse(localStorage.getItem('medications')) || [];
 
-  <script>
-    
-function fetchUsername() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const username = user ? user.username : 'User'; // Default to 'User' if not found
-        document.getElementById('username').textContent = username;
+    if (meds.length === 0) {
+      medList.innerHTML = '<p>No medications added.</p>';
+      return;
     }
 
-    window.onload = fetchUsername; 
-
-
-    async function fetchHeartRate() {
-  try {
-    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/heart-rate');
-    if (!response.ok) {
-      throw new Error('Failed to fetch heart rate');
-    }
-    const data = await response.json();
-    document.querySelector('.value').textContent = `${data.heartRate} bpm`;
-    document.querySelector('.status').textContent = data.heartRate < 100 ? 'Normal' : 'High'; 
-  } catch (error) {
-    console.error('Error:', error);
-    document.querySelector('.value').textContent = 'N/A';
-    document.querySelector('.status').textContent = 'Error fetching data';
+    medList.innerHTML = '';
+    meds.forEach(med => {
+      const timeLeft = getTimeUntil(med.time);
+      const p = document.createElement('p');
+      p.style.margin = "5px 0";
+      p.textContent = `${med.name} – in ${timeLeft}`;
+      medList.appendChild(p);
+    });
   }
-}
+  
 
-window.onload = fetchHeartRate; 
+  function getTimeUntil(targetTime) {
+    // Create Europe/Amsterdam timezone
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
+    const [h, m] = targetTime.split(':');
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
 
-
-    window.onload = function() {
-      fetchUsername();
-      renderDateInNL();
-      renderMedicationsInBubble();
-    };
-
-    function renderMedicationsInBubble() {
-      const medList = document.getElementById('medList');
-      const meds = JSON.parse(localStorage.getItem('medications')) || [];
-
-      if (meds.length === 0) {
-        medList.innerHTML = '<p>No medications added.</p>';
-        return;
-      }
-
-      medList.innerHTML = '';
-      meds.forEach(med => {
-        const timeLeft = getTimeUntil(med.time);
-        const p = document.createElement('p');
-        p.style.margin = "5px 0";
-        p.textContent = `${med.name} – in ${timeLeft}`;
-        medList.appendChild(p);
-      });
+    if (target < now) {
+      target.setDate(target.getDate() + 1); // move to next day if already passed
     }
 
-    function getTimeUntil(targetTime) {
-      const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
-      const [h, m] = targetTime.split(':');
-      const target = new Date(now);
-      target.setHours(h, m, 0, 0);
+    const diff = Math.floor((target - now) / 60000);
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
 
-      if (target < now) {
-        target.setDate(target.getDate() + 1); // move to next day if already passed
-      }
+    return `${hours}h ${minutes}m`;
+  }
 
-      const diff = Math.floor((target - now) / 60000);
-      const hours = Math.floor(diff / 60);
-      const minutes = diff % 60;
+  renderMedicationsInBubble();
 
-      return `${hours}h ${minutes}m`;
-    }
+  // Refresh every minute
+  setInterval(renderMedicationsInBubble, 60000);
+</script>
+<script>
+  function renderDateInNL() {
+    const now = new Date();
+    const nlDate = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Amsterdam',
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(now);
 
-<<<<<<< Updated upstream
-    function renderDateInNL() {
-      const now = new Date();
-      const nlDate = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Europe/Amsterdam',
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }).format(now);
-=======
     document.getElementById('current-date').textContent = nlDate;
   }
 
@@ -378,13 +352,5 @@ function updateWater(change) {
 loadGoalsAndProgress();
 
 </script>
->>>>>>> Stashed changes
-
-      document.getElementById('current-date').textContent = nlDate;
-    }
-
-    renderDateInNL();
-    renderMedicationsInBubble();
-  </script>
 </body>
 </html>
