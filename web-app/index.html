@@ -151,6 +151,12 @@
                 messageDiv.textContent = data.message;
                 messageDiv.className = 'success';
                 
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+
+                }
+                localStorage.setItem('jwt_token', data.token);
+
                 // Store user info (in a real app, you'd store the JWT token)
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
