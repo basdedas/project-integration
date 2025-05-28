@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Doctor Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -69,6 +69,7 @@
       text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
     }
     .card:hover {
       transform: translateY(-5px);
@@ -170,9 +171,9 @@
     <div class="layout">
       <div class="patients-list">
         <h2>My Patients</h2>
-        <div class="patient-item" onclick="location.href='patient1_main.html'">Rana Oral</div>
-        <div class="patient-item" onclick="location.href='patient2_main.html'">Irem Gul Daglar</div>
-        <div class="patient-item" onclick="location.href='patient3_main.html'">Bas Van Dijk</div>
+        <div class="patient-item" onclick="updateStats('Rana Oral')">Rana Oral</div>
+        <div class="patient-item" onclick="updateStats('Irem Gul Daglar')">Irem Gul Daglar</div>
+        <div class="patient-item" onclick="updateStats('Bas Van Dijk')">Bas Van Dijk</div>
         <div class="circle-bar" style="--value:40;--color:#3f51b5">
           <span>400</span>
           <div class="circle-label">/ 1000 steps</div>
@@ -188,37 +189,37 @@
       </div>
       <div class="main-content">
         <div class="main-section">
-          <div class="card" style="background:#ffe5ec">
+          <div class="card" id="card-heart" style="background:#ffe5ec;">
             <h3>Heart Rate</h3>
-            <div class="value">78 bpm</div>
-            <div class="status">Normal</div>
+            <div class="value" id="heart-rate">--</div>
+            <div class="status" id="heart-status">--</div>
           </div>
-          <div class="card" style="background:#e0f7fa">
+          <div class="card" id="card-steps" style="background:#e0f7fa;">
             <h3>Steps</h3>
-            <div class="value">400</div>
-            <div class="status">Normal</div>
+            <div class="value" id="steps">--</div>
+            <div class="status" id="steps-status">--</div>
           </div>
-          <div class="card" style="background:#fff3e0">
+          <div class="card" id="card-temp" style="background:#fff3e0;">
             <h3>Temperature</h3>
-            <div class="value">36.7 °C</div>
-            <div class="status">Normal</div>
+            <div class="value" id="temperature">--</div>
+            <div class="status" id="temp-status">--</div>
           </div>
-          <div class="card" style="background:#e8f5e9">
+          <div class="card" id="card-oxygen" style="background:#e8f5e9;">
             <h3>Blood Oxygen</h3>
-            <div class="value">97%</div>
-            <div class="status">Normal</div>
+            <div class="value" id="oxygen">--</div>
+            <div class="status" id="oxygen-status">--</div>
           </div>
         </div>
+
         <div class="appointment-row">
           <div class="calendar-card">
             <h2>Book Appointment</h2>
             <label for="patient-select">Select patient:</label><br>
-           <select id="patient-select">
-  <option value="Rana Oral">Rana Oral</option>
-  <option value="Irem Gul Daglar">Irem Gul Daglar</option>
-  <option value="Bas Van Dijk">Bas Van Dijk</option>
-</select>
-
+            <select id="patient-select">
+              <option value="Rana Oral">Rana Oral</option>
+              <option value="Irem Gul Daglar">Irem Gul Daglar</option>
+              <option value="Bas Van Dijk">Bas Van Dijk</option>
+            </select>
             <label for="appointment-date">Select a date:</label><br>
             <input type="date" id="appointment-date"><br>
             <button onclick="bookAppointment()">Confirm Appointment</button>
@@ -229,6 +230,7 @@
             <div id="appointments"></div>
           </div>
         </div>
+
         <div class="footer-section">
           <div class="footer-card">
             <strong>Upcoming Appointment:</strong><br>
@@ -243,8 +245,10 @@
       </div>
     </div>
   </div>
+
   <script>
     const appointmentList = document.getElementById("appointments");
+
     function bookAppointment() {
       const patient = document.getElementById("patient-select").value;
       const date = document.getElementById("appointment-date").value;
@@ -252,14 +256,63 @@
       if (patient && date) {
         const entry = document.createElement("div");
         entry.className = "appointment-entry";
-        entry.innerHTML = `<span>${patient} – ${date}</span><button onclick="this.parentElement.remove()">Remove</button>`;
+        entry.innerHTML = `
+  <span>${patient} – ${date}</span>
+  <button onclick="this.parentElement.remove()">Remove</button>
+`;
+
         appointmentList.appendChild(entry);
         confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
+
         confirmation.style.color = "#2e7d32";
       } else {
         confirmation.textContent = "⚠️ Please select both patient and date.";
         confirmation.style.color = "#d32f2f";
       }
+    }
+
+    const patients = {
+      "Rana Oral": {
+        heartRate: "78 bpm", heartStatus: "Normal",
+        steps: "400", stepsStatus: "Normal",
+        temperature: "36.7 °C", tempStatus: "Normal",
+        oxygen: "97%", oxygenStatus: "Normal"
+      },
+      "Irem Gul Daglar": {
+        heartRate: "85 bpm", heartStatus: "Normal",
+        steps: "600", stepsStatus: "Normal",
+        temperature: "37.0 °C", tempStatus: "Normal",
+        oxygen: "96%", oxygenStatus: "Normal"
+      },
+      "Bas Van Dijk": {
+        heartRate: "92 bpm", heartStatus: "Elevated",
+        steps: "300", stepsStatus: "Low",
+        temperature: "38.2 °C", tempStatus: "Fever",
+        oxygen: "94%", oxygenStatus: "Low"
+      }
+    };
+
+    function updateStats(name) {
+      const data = patients[name];
+      document.getElementById("heart-rate").textContent = data.heartRate;
+      document.getElementById("heart-status").textContent = data.heartStatus;
+      document.getElementById("steps").textContent = data.steps;
+      document.getElementById("steps-status").textContent = data.stepsStatus;
+      document.getElementById("temperature").textContent = data.temperature;
+      document.getElementById("temp-status").textContent = data.tempStatus;
+      document.getElementById("oxygen").textContent = data.oxygen;
+      document.getElementById("oxygen-status").textContent = data.oxygenStatus;
+
+      // Enable click and change cursor
+      document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
+      document.getElementById("card-steps").onclick = () => location.href = 'StepCount_GraphPage.html';
+      document.getElementById("card-temp").onclick = () => location.href = 'Temperature_Graph.html';
+      document.getElementById("card-oxygen").onclick = () => location.href = 'BloodOxygen_Graph.html';
+
+      document.getElementById("card-heart").style.cursor = "pointer";
+      document.getElementById("card-steps").style.cursor = "pointer";
+      document.getElementById("card-temp").style.cursor = "pointer";
+      document.getElementById("card-oxygen").style.cursor = "pointer";
     }
   </script>
 </body>
