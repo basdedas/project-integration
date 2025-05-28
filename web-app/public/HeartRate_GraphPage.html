@@ -159,7 +159,7 @@
 
   async function updateChart(type) {
     try {
-      const { labels, data } = await fetchHeartRateData(type);
+      const { date, health_type } = await fetchHeartRateData(type);
 
       updateSummaryStats(data);
       renderChart(labels, data);
