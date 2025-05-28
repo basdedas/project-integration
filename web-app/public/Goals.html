@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set Your Goals</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 40px;
+      background: #f4f9ff;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px;
+      width: 100%;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Set Your Daily Goals</h2>
+    <label for="steps">Steps Goal</label>
+    <input type="number" id="steps" placeholder="e.g. 1000">
+    
+    <label for="water">Water Cups Goal</label>
+    <input type="number" id="water" placeholder="e.g. 8">
+    
+    <label for="calories">Calories Burn Goal</label>
+    <input type="number" id="calories" placeholder="e.g. 500">
+
+    <button onclick="saveGoals()">Save Goals</button>
+  </div>
+
+  <script>
+    function loadCurrentGoals() {
+      const goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
+      document.getElementById("steps").value = goals.steps;
+      document.getElementById("water").value = goals.water;
+      document.getElementById("calories").value = goals.calories;
+    }
+
+    function saveGoals() {
+  const steps = parseInt(document.getElementById("steps").value);
+  const water = parseInt(document.getElementById("water").value);
+  const calories = parseInt(document.getElementById("calories").value);
+
+  const goals = { steps, water, calories };
+  localStorage.setItem("goals", JSON.stringify(goals));
+
+  // Optionally reset progress to 0 so bars reset
+  const progress = { steps: 0, water: 0, calories: 0 };
+  localStorage.setItem("progress", JSON.stringify(progress));
+
+  alert("Goals saved!");
+  window.location.href = "user_main.html"; 
+}
+
+
+    loadCurrentGoals();
+  </script>
+</body>
+</html>

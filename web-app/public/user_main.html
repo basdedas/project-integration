@@ -152,6 +152,25 @@
       color: inherit;
       text-decoration: none;
     }
+    .water-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+.water-buttons button {
+  background-color: #03a9f4;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.water-buttons button:hover {
+  background-color: #0288d1;
+}
+
   </style>
 </head>
 <body>
@@ -192,19 +211,37 @@
       </div>
 
       <div class="circle-section">
-        <div class="circle-bar steps-bar">
-          <span>400</span>
-          <div class="circle-label">/ 1000 steps</div>
-        </div>
-        <div class="circle-bar water-bar">
-          <span>4</span>
-          <div class="circle-label">/ 8 cups</div>
-        </div>
-        <div class="circle-bar calories-bar">
-          <span>300</span>
-          <div class="circle-label">/ 500 kcal</div>
-        </div>
+  <!-- Steps Circle -->
+  <a href="Goals.html" style="text-decoration: none;">
+    <div class="circle-bar steps-bar" id="stepsCircle">
+      <span id="stepsValue">0</span>
+      <div class="circle-label" id="stepsGoalText"></div>
+    </div>
+  </a>
+
+  <!-- Water Circle with Buttons -->
+  <a href="Goals.html" style="text-decoration: none;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="circle-bar water-bar" id="waterCircle">
+        <span id="waterValue">0</span>
+        <div class="circle-label" id="waterGoalText"></div>
       </div>
+    </div>
+  </a>
+  <div class="water-buttons">
+    <button onclick="updateWater(1)">+</button>
+    <button onclick="updateWater(-1)">–</button>
+  </div>
+
+  <!-- Calories Circle -->
+  <a href="Goals.html" style="text-decoration: none;">
+    <div class="circle-bar calories-bar" id="caloriesCircle">
+      <span id="caloriesValue">0</span>
+      <div class="circle-label" id="caloriesGoalText"></div>
+    </div>
+  </a>
+</div>
+
     </div>
 
     <div class="footer-section">
@@ -292,6 +329,7 @@ window.onload = fetchHeartRate;
       return `${hours}h ${minutes}m`;
     }
 
+<<<<<<< Updated upstream
     function renderDateInNL() {
       const now = new Date();
       const nlDate = new Intl.DateTimeFormat('en-GB', {
@@ -301,6 +339,46 @@ window.onload = fetchHeartRate;
         month: 'long',
         day: 'numeric'
       }).format(now);
+=======
+    document.getElementById('current-date').textContent = nlDate;
+  }
+
+  renderDateInNL();
+  
+  function loadGoalsAndProgress() {
+  const goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
+  const progress = JSON.parse(localStorage.getItem("progress")) || { steps: 0, water: 0, calories: 0 };
+
+  // Update Steps
+  document.getElementById("stepsValue").textContent = progress.steps;
+  document.getElementById("stepsGoalText").textContent = `/ ${goals.steps} steps`;
+  document.querySelector(".steps-bar").style.setProperty("--value", (progress.steps / goals.steps) * 100);
+
+  // Update Water
+  document.getElementById("waterValue").textContent = progress.water;
+  document.getElementById("waterGoalText").textContent = `/ ${goals.water} cups`;
+  document.querySelector(".water-bar").style.setProperty("--value", (progress.water / goals.water) * 100);
+
+  // Update Calories
+  document.getElementById("caloriesValue").textContent = progress.calories;
+  document.getElementById("caloriesGoalText").textContent = `/ ${goals.calories} kcal`;
+  document.querySelector(".calories-bar").style.setProperty("--value", (progress.calories / goals.calories) * 100);
+}
+
+function updateWater(change) {
+  let progress = JSON.parse(localStorage.getItem("progress")) || { steps: 0, water: 0, calories: 0 };
+  let goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
+
+  progress.water = Math.max(0, Math.min(goals.water, progress.water + change));
+  localStorage.setItem("progress", JSON.stringify(progress));
+  loadGoalsAndProgress();
+}
+
+// INITIALIZE EVERYTHING ON PAGE LOAD
+loadGoalsAndProgress();
+
+</script>
+>>>>>>> Stashed changes
 
       document.getElementById('current-date').textContent = nlDate;
     }
