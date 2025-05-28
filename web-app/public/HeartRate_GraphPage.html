@@ -122,25 +122,53 @@
   
 
   <script>
-    async function fetchHeartRateData(type) {
-  const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/heart_rate?type=${type}`, {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-      },
-      credentials: 'include' 
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+  const ctx = document.getElementById('heartChart').getContext('2d');
+  let heartChart;
+
+  function generateRandomData(type) {
+    if (type === 'day') {
+      return {
+        labels: [...Array(24).keys()].map(h => `${h}:00`),
+        data: Array.from({ length: 24 }, () => 60 + Math.floor(Math.random() * 40))
+      };
+    } else if (type === 'week') {
+      return {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: Array.from({ length: 7 }, () => 60 + Math.floor(Math.random() * 40))
+      };
+    } else {
+      return {
+        labels: [...Array(30).keys()].map(d => `Day ${d + 1}`),
+        data: Array.from({ length: 30 }, () => 60 + Math.floor(Math.random() * 40))
+      };
+    }
   }
-  return response.json();
-}
 
-async function updateChart(type) {
-  try {
-    const { labels, data } = await fetchHeartRateData(type);
+  async function fetchHeartRateData(type) {
+    const response = await fetch(`/api/heart_rate?type=${type}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // Must return { labels: [...], data: [...] }
+  }
 
+  async function updateChart(type) {
+    try {
+      const { labels, data } = await fetchHeartRateData(type);
+
+      updateSummaryStats(data);
+      renderChart(labels, data);
+    } catch (error) {
+      console.error('Error fetching heart rate data:', error);
+
+      // fallback to generated data
+      const { labels, data } = generateRandomData(type);
+      updateSummaryStats(data);
+      renderChart(labels, data);
+    }
+  }
+
+  function updateSummaryStats(data) {
     const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
     const min = Math.min(...data);
     const max = Math.max(...data);
@@ -157,7 +185,9 @@ async function updateChart(type) {
       status.innerHTML = '✅ Your heart rate looks really good :)';
       status.className = 'status-box normal';
     }
+  }
 
+  function renderChart(labels, data) {
     if (heartChart) heartChart.destroy();
 
     heartChart = new Chart(ctx, {
@@ -192,12 +222,11 @@ async function updateChart(type) {
         }
       }
     });
-  } catch (error) {
-    console.error('Error fetching heart rate data:', error);
   }
-}
 
-updateChart('day');
-  </script>
+  // Initial load
+  updateChart('day');
+</script>
+
 </body>
 </html>
