@@ -154,6 +154,7 @@
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
+    console.log('Fetched heart rate data:', await response.json());
     return response.json(); // Must return { labels: [...], data: [...] }
   }
 
