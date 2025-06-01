@@ -251,6 +251,7 @@
     
     function bookAppointment() {
       const patient = document.getElementById("patient-select").value;
+      localStorage.setItem("selectedPatient", patient);
       const date = document.getElementById("appointment-date").value;
       const confirmation = document.getElementById("confirmation");
       if (patient && date) {
@@ -341,7 +342,7 @@
 
     async function loadData() {
       try {
-        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/temperature?type=day&targetUserEmail=example@example.com`, {
+        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/metrics?targetUserEmail=example@example.com`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

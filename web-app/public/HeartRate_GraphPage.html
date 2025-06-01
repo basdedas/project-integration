@@ -145,7 +145,14 @@
   }
 
   async function fetchHeartRateData(type) {
-    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/heart_rate?type=${type}`, {
+    let link = 'https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/heart_rate?type=${type}'
+    if (localStorage.getItem('user')){
+      if (localStorage.getItem('user').administrator_id){
+        patientEmail = JSON.parse(localStorage.getItem('selectedPatient')).email;
+        link = '${link}&targetUserEmail=${patientEmail}';
+      }
+    }
+    const response = await fetch(``, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
