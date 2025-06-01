@@ -166,7 +166,7 @@
   <div class="dashboard">
     <div class="top-bar">
       <h1>Doctor Dashboard</h1>
-      <div class="icons">🔍 🔔 ⚙️</div>
+      <div class="icons" onclick="logout()">⏻</div>
     </div>
     <div class="layout">
       <div class="patients-list">
@@ -338,6 +338,24 @@
       document.getElementById("card-steps").style.cursor = "pointer";
       document.getElementById("card-temp").style.cursor = "pointer";
       document.getElementById("card-oxygen").style.cursor = "pointer";
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      const response = fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/logout', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      if (response.ok) {
+        console.log("Logout successful");
+      } else {
+        console.error("Logout failed");
+      }
+      window.location.href = '../index.html';
     }
 
     async function loadData() {
