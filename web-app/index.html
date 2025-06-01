@@ -148,6 +148,7 @@
             const data = await response.json();
             
             if (response.ok) {
+                localStorage.clear(); // Clear any previous session data
                 messageDiv.textContent = data.message;
                 messageDiv.className = 'success';
                 localStorage.setItem('token', data.token);
