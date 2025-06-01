@@ -43,6 +43,7 @@
     }
     .icons {
       font-size: 24px;
+      cursor: pointer;
     }
     .main-section {
       display: flex;
@@ -357,6 +358,7 @@ function updateWater(change) {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       if (response.ok) {
