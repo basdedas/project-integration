@@ -180,6 +180,7 @@
     <div class="top-bar">
       <div>
        <h1>Health Overview</h1>
+       <div>Welcome, <span id="username"></span>!</div>
         <p id="current-date">Loading date...</p>
 
       </div>
@@ -267,6 +268,16 @@
     </div>
   </div>
 <script>
+
+  function fetchUsername() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const username = user ? user.username : 'User'; // Default to 'User' if not found
+        document.getElementById('username').textContent = username;
+    }
+
+    window.onload = fetchUsername; // Call when the page loads
+
+
   function renderMedicationsInBubble() {
     const medList = document.getElementById('medList');
     const meds = JSON.parse(localStorage.getItem('medications')) || [];
