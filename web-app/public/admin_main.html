@@ -452,14 +452,14 @@
       // Create patient div for sidebar
       const patientDiv = document.createElement('div');
       patientDiv.className = 'patient-item';
-      patientDiv.textContent = patient.name;
+      patientDiv.textContent = patient.username;
       patientDiv.onclick = () => updateStats(patient.name);
       patientsContainer.appendChild(patientDiv);
 
       // Create dropdown option
       const option = document.createElement('option');
       option.value = patient.name;
-      option.textContent = patient.name;
+      option.textContent = patient.username;
       select.appendChild(option);
     });
   } catch (error) {
