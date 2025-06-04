@@ -445,8 +445,13 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAndDisplayPatients();
 });
 
+logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('selectedPatient');
+  window.location.href = '../index.html';
+};
 
 </script>
-
 </body>
 </html>
