@@ -94,9 +94,10 @@ let temperatureChart = new Chart(ctx, {
 async function fetchHealthData() {
   const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
   if (!res.ok) throw new Error('Failed to fetch health data');
-  const data = await res.json();
+ // const data = await res.json();
   // Filter for temperature data only
   //return data.filter(entry => entry.temperature != null);
+  return await res.json();
 }
 
 function groupBy(data, period) {

@@ -97,9 +97,10 @@ let stepsChart = new Chart(ctx, {
 async function fetchHealthData() {
   const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
   if (!res.ok) throw new Error('Failed to fetch health data');
-  const data = await res.json();
+  //const data = await res.json();
   // Filter for steps data only
   //return data.filter(entry => entry.steps != null);
+  return await res.json();
 }
 
 function groupBy(data, period) {
@@ -125,7 +126,7 @@ function groupBy(data, period) {
   });
 
   for (const label in result) {
-    const total = result[label].reduce((a, b) => a + b, 0);
+    const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
     labels.push(label);
     values.push(Math.round(total));
   }
