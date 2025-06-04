@@ -356,7 +356,8 @@ async function updateStats(patient) {
     localStorage.removeItem('selectedPatient'); // Clear previous selection
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
     
-    patientItems.forEach(item => item.classList.remove('active'));
+    const patientItems = document.querySelectorAll('.patient-item');
+    patientItem.forEach(item => item.classList.remove('active'));
 
     let userEmail = patient.email; // Assuming username is the email
     console.log("Updating stats for:", userEmail);
