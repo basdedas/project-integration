@@ -303,7 +303,7 @@
     console.log("Temperature data loaded:", document.getElementById("temperature").textContent);
     // document.getElementById("temp-status").textContent = data.tempStatus;
     document.getElementById("oxygen").textContent = await loadData('spO2', 'avg_day', userEmail).health_type;
-    console.log("Blood oxygen data loaded:", document.getElementById("oxygen").textContent);
+    console.log("Blood oxygen data loaded:", document.getElementById("spO2").textContent);
     // document.getElementById("oxygen-status").textContent = data.oxygenStatus;
 
     // Enable click and change cursor
