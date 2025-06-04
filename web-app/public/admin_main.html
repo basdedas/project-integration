@@ -25,6 +25,7 @@
       font-size: 24px;
       justify-content: end;
       justify-self: end;
+      cursor: pointer;
     }
     .layout { display: flex; gap: 30px; }
     .patients-list {
@@ -296,7 +297,6 @@ function bookAppointment() {
       makeAppointment(patientEmail, date, time, reason, notes);
       confirmation.textContent = `✅ Appointment booked for ${patient.username} on ${date}`;
       confirmation.style.color = "#2e7d32";
-      location.reload(); 
   }} catch (error) {
     console.error("Error booking appointment:", error);
     confirmation.textContent = "⚠️ Please select both patient and date.";
@@ -348,6 +348,8 @@ async function remove_appointment(appointmentId) {
 
 async function updateStats(patient) {
   try {
+    localStorage.setItem('selectedPatient', JSON.stringify(patient));
+
     let userEmail = patient.email; // Assuming username is the email
     console.log("Updating stats for:", userEmail);
 
@@ -521,7 +523,6 @@ async function updateStats(patient) {
     const patients = await response.json();
 
     const patientsContainer = document.getElementById('patient-items-container');
-    const select = document.getElementById('patient-select');
 
     patients.forEach(patient => {
       // Create patient div for sidebar
@@ -530,7 +531,6 @@ async function updateStats(patient) {
       patientDiv.textContent = patient.username;
       patientDiv.onclick = () => updateStats(patient);
       patientsContainer.appendChild(patientDiv);
-      localStorage.setItem('selectedPatient', JSON.stringify(patient));
 
       // Create dropdown option
       const option = document.createElement('option');
