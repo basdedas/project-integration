@@ -158,20 +158,24 @@
       console.error('Error parsing user data:', error);
       return { labels: [], data: [] }; 
     }
+    console.log('User data:', user);
 
     if (user && user.administrator_id) {
       if (selectedPatient && selectedPatient.email) {
+        console.log('Selected patient:', selectedPatient);
         patientEmail = selectedPatient.email;
         link = `${link}&targetUserEmail=${patientEmail}`;
       } else {
         console.warn('No selected patient email found');
       }
     } else if (user && user.email) {
+      console.log('Using logged-in user email:', user.email);
       patientEmail = user.email;
       link = `${link}&targetUserEmail=${patientEmail}`;
     } else {
       console.warn('No user or patient email found');
     }
+    console.log('Fetching heart rate data from:', link);
     const response = await fetch(link, {
       method: 'GET',
       headers: {
