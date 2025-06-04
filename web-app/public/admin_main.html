@@ -166,8 +166,9 @@
   <div class="dashboard">
     <div class="top-bar">
       <h1>Doctor Dashboard</h1>
-      <div class="icons">🔍 🔔 ⚙️</div>
-    </div>
+      <div class="icons" onclick="logout()">
+        ⏻
+      </div>
     <div class="layout">
       <div class="patients-list">
        <div class="patients-list">
@@ -273,26 +274,6 @@
   }
 }
 
-    const patients = {
-      "Rana Oral": {
-        heartRate: "78 bpm", heartStatus: "Normal",
-        steps: "400", stepsStatus: "Normal",
-        temperature: "36.7 °C", tempStatus: "Normal",
-        oxygen: "97%", oxygenStatus: "Normal"
-      },
-      "Irem Gul Daglar": {
-        heartRate: "85 bpm", heartStatus: "Normal",
-        steps: "600", stepsStatus: "Normal",
-        temperature: "37.0 °C", tempStatus: "Normal",
-        oxygen: "96%", oxygenStatus: "Normal"
-      },
-      "Bas Van Dijk": {
-        heartRate: "92 bpm", heartStatus: "Elevated",
-        steps: "300", stepsStatus: "Low",
-        temperature: "38.2 °C", tempStatus: "Fever",
-        oxygen: "94%", oxygenStatus: "Low"
-      }
-    };
     //Just for testing purposes, you can remove this later
    async function updateStats(name) {
   try {
