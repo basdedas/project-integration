@@ -166,7 +166,7 @@
   <div class="dashboard">
     <div class="top-bar">
       <h1>Doctor Dashboard</h1>
-      <div class="icons" onclick="logout()">⏻</div>
+      <div class="icons">🔍 🔔 ⚙️</div>
     </div>
     <div class="layout">
       <div class="patients-list">
@@ -250,90 +250,96 @@
   </div>
 
   <script>
-  /*  const appointmentList = document.getElementById("appointments");
+    const appointmentList = document.getElementById("appointments");
     
- async function bookAppointment() {
-  const selectedValue = document.getElementById("patient-select").value;
+   function bookAppointment() {
+  const patient = document.getElementById("patient-select").value;
   const date = document.getElementById("appointment-date").value;
   const confirmation = document.getElementById("confirmation");
+  if (patient && date) {
+    const entry = document.createElement("div");
+    entry.className = "appointment-entry";
+    entry.innerHTML = `
+      <span>${patient} – ${date}</span>
+      <button onclick="this.parentElement.remove()">Remove</button>
+    `;
 
-  if (selectedValue && date) {
-    try {
-      const patient = JSON.parse(selectedValue); // extract both name and email
-
-      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointment/make', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          username: patient,
-          date: date,
-          reason: "Consultation with Dr. James"
-        })
-      });
-
-      if (!response.ok) throw new Error("Failed to book appointment");
-
-      confirmation.textContent = `✅ Appointment booked for ${patient.name} on ${date}`;
-      confirmation.style.color = "#2e7d32";
-    } catch (error) {
-      confirmation.textContent = "⚠️ Failed to book appointment.";
-      confirmation.style.color = "#d32f2f";
-      console.error("Booking error:", error);
-    }
-  } else {
-    confirmation.textContent = "⚠️ Please select both patient and date.";
-    confirmation.style.color = "#d32f2f";
-  }
-}
-*/
-
-
-async function bookAppointment() {
-  const selectedValue = document.getElementById("patient-select").value;
-  const date = document.getElementById("appointment-date").value;
-  const confirmation = document.getElementById("confirmation");
-
-  if (selectedValue && date) {
-    try {
-      const patient = JSON.parse(selectedValue); // value = { name, email }
-
-      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointment/make', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          email: patient.email,
-          date: date,
-          reason: "Consultation with Doctor"
-        })
-      });
-
-      if (!response.ok) throw new Error("Failed to book appointment");
-
-      confirmation.textContent = `✅ Appointment booked for ${patient.name} on ${date}`;
-      confirmation.style.color = "#2e7d32";
-    } catch (error) {
-      confirmation.textContent = "⚠️ Failed to book appointment.";
-      confirmation.style.color = "#d32f2f";
-      console.error("Booking error:", error);
-    }
+    appointmentList.appendChild(entry);
+    confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
+    confirmation.style.color = "#2e7d32";
   } else {
     confirmation.textContent = "⚠️ Please select both patient and date.";
     confirmation.style.color = "#d32f2f";
   }
 }
 
+    const patients = {
+      "Rana Oral": {
+        heartRate: "78 bpm", heartStatus: "Normal",
+        steps: "400", stepsStatus: "Normal",
+        temperature: "36.7 °C", tempStatus: "Normal",
+        oxygen: "97%", oxygenStatus: "Normal"
+      },
+      "Irem Gul Daglar": {
+        heartRate: "85 bpm", heartStatus: "Normal",
+        steps: "600", stepsStatus: "Normal",
+        temperature: "37.0 °C", tempStatus: "Normal",
+        oxygen: "96%", oxygenStatus: "Normal"
+      },
+      "Bas Van Dijk": {
+        heartRate: "92 bpm", heartStatus: "Elevated",
+        steps: "300", stepsStatus: "Low",
+        temperature: "38.2 °C", tempStatus: "Fever",
+        oxygen: "94%", oxygenStatus: "Low"
+      }
+    };
+    //Just for testing purposes, you can remove this later
+   async function updateStats(name) {
+  try {
+    // Fetch patient data from the API
+    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/patientData?name=${encodeURIComponent(name)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+
+    // Update the dashboard with fetched data
+    document.getElementById("heart-rate").textContent = data.heartRate;
+    document.getElementById("heart-status").textContent = data.heartStatus;
+    document.getElementById("steps").textContent = data.steps;
+    document.getElementById("steps-status").textContent = data.stepsStatus;
+    document.getElementById("temperature").textContent = data.temperature;
+    document.getElementById("temp-status").textContent = data.tempStatus;
+    document.getElementById("oxygen").textContent = data.oxygen;
+    document.getElementById("oxygen-status").textContent = data.oxygenStatus;
+
+    // Enable click and change cursor
+    document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
+    document.getElementById("card-steps").onclick = () => location.href = 'StepCount_GraphPage.html';
+    document.getElementById("card-temp").onclick = () => location.href = 'Temperature_Graph.html';
+    document.getElementById("card-oxygen").onclick = () => location.href = 'BloodOxygen_Graph.html';
+
+    document.getElementById("card-heart").style.cursor = "pointer";
+    document.getElementById("card-steps").style.cursor = "pointer";
+    document.getElementById("card-temp").style.cursor = "pointer";
+    document.getElementById("card-oxygen").style.cursor = "pointer";
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+  }
+}
 
 
     async function loadData() {
       try {
-        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/metrics?targetUserEmail=example@example.com`, {
+        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/temperature?type=day&targetUserEmail=example@example.com`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -350,46 +356,20 @@ async function bookAppointment() {
       }
     }
 
-
-async function fetchAndDisplayPatients() {
-  loadData();
-  const token = localStorage.getItem('token');
-
-  try {
-    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users', {
+    async function getPatientData() {
+      // Simulate fetching patient data
+      const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }});
     if (!response.ok) {
-      console.error('Failed to fetch patient data');
-      return;
+      throw new Error('Network response was not ok');
     }
-
-    const patients = await response.json();
-    const container = document.getElementById('patient-items-container');
-    container.innerHTML = ''; // Clear existing items
-
-    patients.forEach(patient => {
-      const item = document.createElement('div');
-      item.classList.add('patient-item');
-      item.innerHTML = `
-        <strong>${patient.email}</strong><br>
-        <span>${patient.email}</span>
-        <hr>
-      `;
-      container.appendChild(item);
-    });
-
-  } catch (err) {
-    console.error('Error fetching patients:', err);
-  }
-}
-
-
+    console.log("Fetching patient data...");
+    return response.json(); // Must return users
+    }
 
     async function getAppointments() {
       try {
@@ -429,7 +409,55 @@ async function fetchAndDisplayPatients() {
       }
     }
   </script>
-  
+  <script>
+  async function fetchAndDisplayPatients() {
+  try {
+    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const patients = await response.json();
+
+    const patientsContainer = document.getElementById('patient-items-container');
+    const select = document.getElementById('patient-select');
+
+    // Clear existing items
+    patientsContainer.innerHTML = '';
+    select.innerHTML = '';
+
+    patients.forEach(patient => {
+      // Create patient div for sidebar
+      const patientDiv = document.createElement('div');
+      patientDiv.className = 'patient-item';
+      patientDiv.textContent = patient.name;
+      patientDiv.onclick = () => updateStats(patient.name);
+      patientsContainer.appendChild(patientDiv);
+
+      // Create dropdown option
+      const option = document.createElement('option');
+      option.value = patient.name;
+      option.textContent = patient.name;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetchAndDisplayPatients();
+});
+
+
+</script>
 
 </body>
 </html>
