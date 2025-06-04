@@ -198,7 +198,7 @@
     <div class="layout">
        <div class="patients-list"> <h2>My Patients</h2>
           <div id="patient-items-container">
-            </div>
+          </div>
   
     <!-- Patient items will be inserted here dynamically -->
     <!-- ... existing circle bars ... -->
@@ -348,6 +348,7 @@ async function remove_appointment(appointmentId) {
 
 async function updateStats(patient) {
   try {
+    localStorage.removeItem('selectedPatient'); // Clear previous selection
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
 
     let userEmail = patient.email; // Assuming username is the email
@@ -523,6 +524,7 @@ async function updateStats(patient) {
     const patients = await response.json();
 
     const patientsContainer = document.getElementById('patient-items-container');
+    const select = document.createElement('patient-select');
 
     patients.forEach(patient => {
       // Create patient div for sidebar
