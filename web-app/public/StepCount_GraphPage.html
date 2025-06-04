@@ -77,22 +77,19 @@ let stepsChart = new Chart(ctx, {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: context => `Steps: ${context.parsed.y.toLocaleString()}`
+          label: context => `Steps: ${context.parsed.y}`
         }
       }
     },
     scales: {
       y: {
-        beginAtZero: true,
-        ticks: {
-          callback: function(value) {
-            return value.toLocaleString();
+        beginAtZero: false,
+        suggestedMin:85,
+        SuggestedMax:100
           }
         }
       }
-    }
-  }
-});
+  });
 
 async function fetchHealthData() {
   const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
@@ -128,7 +125,7 @@ function groupBy(data, period) {
   for (const label in result) {
     const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
     labels.push(label);
-    values.push(Math.round(total));
+    values.push(Math.round(avg));
   }
 
   return { labels, values };
