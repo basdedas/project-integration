@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Heart Rate History</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -30,9 +30,6 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .time-buttons button:hover {
-      background-color: #d32f2f;
-    }
     .chart-container {
       max-width: 900px;
       margin: auto;
@@ -40,11 +37,6 @@
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .chart-container:hover {
-      transform: scale(1.03);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
     }
     .summary-section {
       display: flex;
@@ -58,11 +50,6 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .summary-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
     .summary-item h3 {
       font-size: 16px;
@@ -89,13 +76,16 @@
   </style>
 </head>
 <body>
+
   <h1>Heart Rate History</h1>
   <p style="text-align:center">Visualize your heart rate measurements across time periods.</p>
+
   <div class="time-buttons">
-    <button onclick="updateChart('day')">Day</button>
-    <button onclick="updateChart('week')">Week</button>
-    <button onclick="updateChart('month')">Month</button>
+   <button id="day-btn" onclick="loadData('day')">Day</button>
+      <button id="week-btn" onclick="loadData('week')">Week</button>
+      <button id="month-btn" onclick="loadData('month')">Month</button>
   </div>
+
   <div class="chart-container">
     <canvas id="heartChart"></canvas>
   </div>
@@ -119,92 +109,89 @@
     Loading status...
   </div>
 
-  
 
+
+
+  
   <script>
   const ctx = document.getElementById('heartChart').getContext('2d');
-  let heartChart;
-
-  // function generateRandomData(type) {
-  //   if (type === 'day') {
-  //     return {
-  //       labels: [...Array(24).keys()].map(h => `${h}:00`),
-  //       data: Array.from({ length: 24 }, () => 60 + Math.floor(Math.random() * 40))
-  //     };
-  //   } else if (type === 'week') {
-  //     return {
-  //       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  //       data: Array.from({ length: 7 }, () => 60 + Math.floor(Math.random() * 40))
-  //     };
-  //   } else {
-  //     return {
-  //       labels: [...Array(30).keys()].map(d => `Day ${d + 1}`),
-  //       data: Array.from({ length: 30 }, () => 60 + Math.floor(Math.random() * 40))
-  //     };
-  //   }
-  // }
-
-  async function fetchHeartRateData(type) {
-    let link = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/heart_rate?type=${type}`;
-    let patientEmail = '';
-    const userJSON =localStorage.getItem('user');
-    const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
-
-    let user = null;
-
-    try {
-      if (userJSON) user = JSON.parse(userJSON);
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      return { labels: [], data: [] }; 
-    }
-    console.log('User data:', user);
-
-    if (user && user.administrator_id) {
-      if (selectedPatient && selectedPatient.email) {
-        console.log('Selected patient:', selectedPatient);
-        patientEmail = selectedPatient.email;
-        link = `${link}&targetUserEmail=${patientEmail}`;
-      } else {
-        console.warn('No selected patient email found');
+  let heartChart = new Chart(ctx, {
+    type: 'line',
+    data: {},
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: context => `Heart Rate: ${context.parsed.y} bpm`
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          suggestedMin: 50,
+          suggestedMax: 120
+        }
       }
-    } else if (user && user.email) {
-      console.log('Using logged-in user email:', user.email);
-      patientEmail = user.email;
-      link = `${link}&targetUserEmail=${patientEmail}`;
-    } else {
-      console.warn('No user or patient email found');
     }
-    console.log('Fetching heart rate data from:', link);
-    const response = await fetch(link, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }});
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json(); // Must return { labels: [...], data: [...] }
+  });
+
+  async function fetchHealthData() {
+    const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
+    if (!res.ok) throw new Error('Failed to fetch health data');
+    const data = await res.json();
+    // Filter for heart rate data only
+    return data.filter(entry => entry.heart_rate != null);
   }
 
-  async function updateChart(type) {
-    try {
-      const { data, labels } = await fetchHeartRateData(type);
+  function groupBy(data, period) {
+    const result = {};
+    const labels = [];
+    const values = [];
 
-      updateSummaryStats(data);
-      renderChart(labels, data);
-    } catch (error) {
-      console.error('Error fetching heart rate data:', error);
+    data.forEach(entry => {
+      const ts = new Date(entry.timestamp);
+      let label;
 
-      // // fallback to generated data
-      // const { labels, data } = generateRandomData(type);
-      // updateSummaryStats(data);
-      // renderChart(labels, data);
+      if (period === 'day') {
+        label = `${ts.getHours()}:00`;
+      } else if (period === 'week') {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        label = days[ts.getDay()];
+      } else if (period === 'month') {
+        label = `Day ${ts.getDate()}`;
+      }
+
+      if (!result[label]) result[label] = [];
+      result[label].push(entry.heart_rate);
+    });
+
+    for (const label in result) {
+      const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
+      labels.push(label);
+      values.push(Math.round(avg));
     }
+
+    return { labels, values };
   }
 
-  function updateSummaryStats(data) {
+  function updateActiveTab(period) {
+    // Remove active class from all buttons
+    document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+    // Add active class to current button
+    document.getElementById(`${period}-btn`).classList.add('active');
+  }
+
+  function updateSummary(data) {
+    if (!data.length) {
+      document.getElementById("avg-val").innerText = "--";
+      document.getElementById("min-val").innerText = "--";
+      document.getElementById("max-val").innerText = "--";
+      return;
+    }
+
     const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
     const min = Math.min(...data);
     const max = Math.max(...data);
@@ -215,53 +202,43 @@
 
     const status = document.getElementById("status-msg");
     if (avg < 60 || avg > 100) {
-      status.innerHTML = '⚠️ Please contact your doctor ASAP!';
-      status.className = 'status-box alert';
+      status.innerText = "⚠️ Please contact your doctor ASAP!";
+      status.className = "status-box alert";
     } else {
-      status.innerHTML = '✅ Your heart rate looks really good :)';
-      status.className = 'status-box normal';
+      status.innerText = "✅ Your heart rate looks really good :)";
+      status.className = "status-box normal";
     }
   }
 
-  function renderChart(labels, data) {
-    if (heartChart) heartChart.destroy();
+  async function loadData(period) {
+    try {
+      updateActiveTab(period);
+      const allData = await fetchHealthData();
+      const { labels, values } = groupBy(allData, period);
 
-    heartChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Heart Rate (bpm)',
-          data,
-          fill: true,
-          borderColor: '#ef5350',
-          backgroundColor: 'rgba(239, 83, 80, 0.1)',
-          pointBackgroundColor: '#ef5350',
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: context => `Heart Rate: ${context.parsed.y} bpm`
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            suggestedMax: 120
-          }
-        }
-      }
-    });
+      heartChart.data.labels = labels;
+      heartChart.data.datasets = [{
+        label: 'Heart Rate (bpm)',
+        data: values,
+        fill: true,
+        backgroundColor: 'rgba(239, 83, 80, 0.2)',
+        borderColor: '#ef5350',
+        tension: 0.3,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }];
+      heartChart.update();
+
+      updateSummary(values);
+    } catch (error) {
+      console.error('Error loading chart data:', error);
+      document.getElementById("status-msg").innerText = "Failed to load data.";
+      document.getElementById("status-msg").className = "status-box alert";
+    }
   }
 
-  // Initial load
-  updateChart('day');
+  // Load initial data
+  loadData('day');
 </script>
 
 </body>
