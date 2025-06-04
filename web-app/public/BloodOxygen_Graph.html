@@ -67,51 +67,89 @@
   </div>
 
   <script>
-    const ctx = document.getElementById('oxygenChart').getContext('2d');
-    let oxygenChart = new Chart(ctx, {
-      type: 'line',
-      data: {},
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: context => `SpO₂: ${context.parsed.y}%`
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            suggestedMin: 85,
-            suggestedMax: 100
+ <script>
+  const ctx = document.getElementById('oxygenChart').getContext('2d');
+  let oxygenChart = new Chart(ctx, {
+    type: 'line',
+    data: {},
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: context => `SpO₂: ${context.parsed.y}%`
           }
         }
-      }
-    });
-
-    const datasets = {
-      day: {
-        labels: [...Array(24).keys()].map(h => `${h}:00`),
-        data: Array.from({length: 24}, () => 90 + Math.floor(Math.random() * 10))
       },
-      week: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        data: Array.from({length: 7}, () => 92 + Math.floor(Math.random() * 6))
-      },
-      month: {
-        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
-        data: Array.from({length: 30}, () => 91 + Math.floor(Math.random() * 7))
+      scales: {
+        y: {
+          beginAtZero: false,
+          suggestedMin: 85,
+          suggestedMax: 100
+        }
       }
-    };
+    }
+  });
 
-    function loadData(period) {
-      const selected = datasets[period];
-      oxygenChart.data.labels = selected.labels;
+  async function fetchHealthData() {
+    const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
+    if (!res.ok) throw new Error('Failed to fetch health data');
+    return await res.json();
+  }
+
+  function groupByPeriod(data, period) {
+    const grouped = {};
+    const labels = [];
+    const values = [];
+
+    if (period === 'day') {
+      // Use hour labels
+      for (let i = 0; i < 24; i++) {
+        const hourLabel = `${i}:00`;
+        labels.push(hourLabel);
+        const filtered = data.filter(d => new Date(d.timestamp).getHours() === i);
+        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
+        values.push(avg);
+      }
+    } else if (period === 'week') {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      for (let i = 0; i < 7; i++) {
+        const dayLabel = days[i];
+        labels.push(dayLabel);
+        const filtered = data.filter(d => new Date(d.timestamp).getDay() === i);
+        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
+        values.push(avg);
+      }
+    } else if (period === 'month') {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        labels.push(`Day ${i}`);
+        const filtered = data.filter(d => {
+          const ts = new Date(d.timestamp);
+          return ts.getDate() === i && ts.getMonth() === currentMonth && ts.getFullYear() === currentYear;
+        });
+        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
+        values.push(avg);
+      }
+    }
+
+    return { labels, values };
+  }
+
+  async function loadData(period) {
+    try {
+      const allData = await fetchHealthData();
+      const { labels, values } = groupByPeriod(allData, period);
+
+      oxygenChart.data.labels = labels;
       oxygenChart.data.datasets = [{
         label: 'Blood Oxygen (%)',
-        data: selected.data,
+        data: values,
         fill: true,
         backgroundColor: 'rgba(0, 188, 212, 0.2)',
         borderColor: '#00bcd4',
@@ -120,9 +158,14 @@
         pointHoverRadius: 7
       }];
       oxygenChart.update();
+    } catch (error) {
+      console.error('Chart loading failed:', error);
     }
+  }
 
-    loadData('day');
+  loadData('day');
+</script>
+
   </script>
 </body>
 </html>
