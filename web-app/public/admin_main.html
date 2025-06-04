@@ -179,6 +179,11 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
+    #appointments {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -310,13 +315,36 @@ async function updateAppointments() {
       entry.className = "appointment-entry";
       entry.innerHTML = `
         <span>${appointment.username} – ${appointment.formatted_date} at ${appointment.formatted_date} for ${appointment.reason}\n Notes: ${appointment.notes}</span>
-        <button onclick="this.parentElement.remove()">Remove</button>
+        <button onclick="remove_appointment(appointment.appointment_id)">Remove</button>
       `;
       appointmentList.appendChild(entry);
     });
   } catch (error) {
     console.error("Error updating appointments:", error);
   }
+}
+remove_appointment(appointmentId) {
+  fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointment/remove/${appointmentId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Appointment removed successfully:", data);
+    updateAppointments(); // Refresh the appointment list
+    location.reload(); // Reload the page to reflect changes
+  })
+  .catch(error => {
+    console.error("Error removing appointment:", error);
+  });
 }
 
 async function updateStats(patient) {
