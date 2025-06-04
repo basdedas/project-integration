@@ -294,12 +294,16 @@
 
     // Update the dashboard with fetched data
     document.getElementById("heart-rate").textContent = await loadData('heart_rate', 'avg_day', userEmail).healthType;
+    console.log("Heart rate data loaded:", document.getElementById("heart-rate").textContent);
     // document.getElementById("heart-status").textContent = data.heartStatus;
     document.getElementById("steps").textContent = await loadData('steps', 'avg_day', userEmail).healthType;
+    console.log("Steps data loaded:", document.getElementById("steps").textContent);
     // document.getElementById("steps-status").textContent = data.stepsStatus;
     document.getElementById("temperature").textContent = await loadData('temperature', 'avg_day', userEmail).healthType;
+    console.log("Temperature data loaded:", document.getElementById("temperature").textContent);
     // document.getElementById("temp-status").textContent = data.tempStatus;
     document.getElementById("oxygen").textContent = await loadData('spO2', 'avg_day', userEmail).healthType;
+    console.log("Blood oxygen data loaded:", document.getElementById("oxygen").textContent);
     // document.getElementById("oxygen-status").textContent = data.oxygenStatus;
 
     // Enable click and change cursor
