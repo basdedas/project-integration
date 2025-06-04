@@ -66,8 +66,8 @@
     </div>
   </div>
 
+
   <script>
- 
   const ctx = document.getElementById('oxygenChart').getContext('2d');
   let oxygenChart = new Chart(ctx, {
     type: 'line',
@@ -98,44 +98,32 @@
     return await res.json();
   }
 
-  function groupByPeriod(data, period) {
-    const grouped = {};
+  function groupBy(data, period) {
+    const result = {};
     const labels = [];
     const values = [];
 
-    if (period === 'day') {
-      // Use hour labels
-      for (let i = 0; i < 24; i++) {
-        const hourLabel = `${i}:00`;
-        labels.push(hourLabel);
-        const filtered = data.filter(d => new Date(d.timestamp).getHours() === i);
-        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
-        values.push(avg);
-      }
-    } else if (period === 'week') {
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      for (let i = 0; i < 7; i++) {
-        const dayLabel = days[i];
-        labels.push(dayLabel);
-        const filtered = data.filter(d => new Date(d.timestamp).getDay() === i);
-        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
-        values.push(avg);
-      }
-    } else if (period === 'month') {
-      const now = new Date();
-      const currentMonth = now.getMonth();
-      const currentYear = now.getFullYear();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    data.forEach(entry => {
+      const ts = new Date(entry.timestamp);
+      let label;
 
-      for (let i = 1; i <= daysInMonth; i++) {
-        labels.push(`Day ${i}`);
-        const filtered = data.filter(d => {
-          const ts = new Date(d.timestamp);
-          return ts.getDate() === i && ts.getMonth() === currentMonth && ts.getFullYear() === currentYear;
-        });
-        const avg = filtered.length ? Math.round(filtered.reduce((sum, d) => sum + d.spo2, 0) / filtered.length) : null;
-        values.push(avg);
+      if (period === 'day') {
+        label = `${ts.getHours()}:00`;
+      } else if (period === 'week') {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        label = days[ts.getDay()];
+      } else if (period === 'month') {
+        label = `Day ${ts.getDate()}`;
       }
+
+      if (!result[label]) result[label] = [];
+      result[label].push(entry.spo2);
+    });
+
+    for (const label in result) {
+      const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
+      labels.push(label);
+      values.push(Math.round(avg));
     }
 
     return { labels, values };
@@ -144,7 +132,7 @@
   async function loadData(period) {
     try {
       const allData = await fetchHealthData();
-      const { labels, values } = groupByPeriod(allData, period);
+      const { labels, values } = groupBy(allData, period);
 
       oxygenChart.data.labels = labels;
       oxygenChart.data.datasets = [{
@@ -159,13 +147,12 @@
       }];
       oxygenChart.update();
     } catch (error) {
-      console.error('Chart loading failed:', error);
+      console.error('Error loading chart data:', error);
     }
   }
 
   loadData('day');
+</script>
 
-
-  </script>
 </body>
 </html>
