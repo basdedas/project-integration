@@ -191,13 +191,12 @@
       </div>
       </div>
     <div class="layout">
-       <div class="patients-list">
-  <h2>My Patients</h2>
-  <div id="patient-items-container">
-    
+       <div class="patients-list"> <h2>My Patients</h2>
+          <div id="patient-items-container">
+            </div>
+  
     <!-- Patient items will be inserted here dynamically -->
-  </div>
-  <!-- ... existing circle bars ... -->
+    <!-- ... existing circle bars ... -->
 
 
         <div class="circle-bar" style="--value:40;--color:#3f51b5">
@@ -481,10 +480,6 @@ function bookAppointment() {
 
     const patientsContainer = document.getElementById('patient-items-container');
     const select = document.getElementById('patient-select');
-
-    // Clear existing items
-    patientsContainer.innerHTML = '';
-    select.innerHTML = '';
 
     patients.forEach(patient => {
       // Create patient div for sidebar
