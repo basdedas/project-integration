@@ -253,12 +253,14 @@
     const appointmentList = document.getElementById("appointments");
     
  async function bookAppointment() {
-  const patient = document.getElementById("patient-select").value;
+  const selectedValue = document.getElementById("patient-select").value;
   const date = document.getElementById("appointment-date").value;
   const confirmation = document.getElementById("confirmation");
 
-  if (patient && date) {
+  if (selectedValue && date) {
     try {
+      const patient = JSON.parse(selectedValue); // extract both name and email
+
       const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointments', {
         method: 'POST',
         headers: {
@@ -266,7 +268,8 @@
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          name: patient,
+          name: patient.name,
+          email: patient.email,  // this is what user page will use
           date: date,
           reason: "Consultation with Dr. James"
         })
@@ -274,7 +277,7 @@
 
       if (!response.ok) throw new Error("Failed to book appointment");
 
-      confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
+      confirmation.textContent = `✅ Appointment booked for ${patient.name} on ${date}`;
       confirmation.style.color = "#2e7d32";
     } catch (error) {
       confirmation.textContent = "⚠️ Failed to book appointment.";
@@ -288,68 +291,6 @@
 }
 
 
-    const patients = {
-      "Rana Oral": {
-        heartRate: "78 bpm", heartStatus: "Normal",
-        steps: "400", stepsStatus: "Normal",
-        temperature: "36.7 °C", tempStatus: "Normal",
-        oxygen: "97%", oxygenStatus: "Normal"
-      },
-      "Irem Gul Daglar": {
-        heartRate: "85 bpm", heartStatus: "Normal",
-        steps: "600", stepsStatus: "Normal",
-        temperature: "37.0 °C", tempStatus: "Normal",
-        oxygen: "96%", oxygenStatus: "Normal"
-      },
-      "Bas Van Dijk": {
-        heartRate: "92 bpm", heartStatus: "Elevated",
-        steps: "300", stepsStatus: "Low",
-        temperature: "38.2 °C", tempStatus: "Fever",
-        oxygen: "94%", oxygenStatus: "Low"
-      }
-    };
-    //Just for testing purposes, you can remove this later
-   async function updateStats(name) {
-  try {
-    // Fetch patient data from the API
-    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/patientData?name=${encodeURIComponent(name)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-
-    // Update the dashboard with fetched data
-    document.getElementById("heart-rate").textContent = data.heartRate;
-    document.getElementById("heart-status").textContent = data.heartStatus;
-    document.getElementById("steps").textContent = data.steps;
-    document.getElementById("steps-status").textContent = data.stepsStatus;
-    document.getElementById("temperature").textContent = data.temperature;
-    document.getElementById("temp-status").textContent = data.tempStatus;
-    document.getElementById("oxygen").textContent = data.oxygen;
-    document.getElementById("oxygen-status").textContent = data.oxygenStatus;
-
-    // Enable click and change cursor
-    document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
-    document.getElementById("card-steps").onclick = () => location.href = 'StepCount_GraphPage.html';
-    document.getElementById("card-temp").onclick = () => location.href = 'Temperature_Graph.html';
-    document.getElementById("card-oxygen").onclick = () => location.href = 'BloodOxygen_Graph.html';
-
-    document.getElementById("card-heart").style.cursor = "pointer";
-    document.getElementById("card-steps").style.cursor = "pointer";
-    document.getElementById("card-temp").style.cursor = "pointer";
-    document.getElementById("card-oxygen").style.cursor = "pointer";
-  } catch (error) {
-    console.error("Error fetching patient data:", error);
-  }
-}
 
 
     async function loadData() {
@@ -371,28 +312,12 @@
       }
     }
 
-   /*async function getPatientData() {
-  const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-
-  console.log("Fetching patient data...");
-  return response.json();
-}*/
 
 async function fetchAndDisplayPatients() {
   const token = localStorage.getItem('token');
 
   try {
-    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/patıents', {
+    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/patients', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -499,8 +424,9 @@ async function fetchAndDisplayPatients() {
 
       // Create dropdown option
       const option = document.createElement('option');
-      option.value = patient.name;
-      option.textContent = patient.username;
+      option.value = JSON.stringify({ name: patient.name, email: patient.email });
+option.textContent = patient.username;
+
       select.appendChild(option);
     });
   } catch (error) {
