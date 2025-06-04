@@ -166,7 +166,7 @@
   <div class="dashboard">
     <div class="top-bar">
       <h1>Doctor Dashboard</h1>
-      <div class="icons" onclick="logout()">⏻</div>
+      <div class="icons">🔍 🔔 ⚙️</div>
     </div>
     <div class="layout">
       <div class="patients-list">
@@ -252,41 +252,26 @@
   <script>
     const appointmentList = document.getElementById("appointments");
     
- async function bookAppointment() {
+   function bookAppointment() {
   const patient = document.getElementById("patient-select").value;
   const date = document.getElementById("appointment-date").value;
   const confirmation = document.getElementById("confirmation");
-
   if (patient && date) {
-    try {
-      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          name: patient,
-          date: date,
-          reason: "Consultation with Dr. James"
-        })
-      });
+    const entry = document.createElement("div");
+    entry.className = "appointment-entry";
+    entry.innerHTML = `
+      <span>${patient} – ${date}</span>
+      <button onclick="this.parentElement.remove()">Remove</button>
+    `;
 
-      if (!response.ok) throw new Error("Failed to book appointment");
-
-      confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
-      confirmation.style.color = "#2e7d32";
-    } catch (error) {
-      confirmation.textContent = "⚠️ Failed to book appointment.";
-      confirmation.style.color = "#d32f2f";
-      console.error("Booking error:", error);
-    }
+    appointmentList.appendChild(entry);
+    confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
+    confirmation.style.color = "#2e7d32";
   } else {
     confirmation.textContent = "⚠️ Please select both patient and date.";
     confirmation.style.color = "#d32f2f";
   }
 }
-
 
     const patients = {
       "Rana Oral": {
@@ -354,7 +339,7 @@
 
     async function loadData() {
       try {
-        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/metrics?targetUserEmail=example@example.com`, {
+        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/temperature?type=day&targetUserEmail=example@example.com`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
