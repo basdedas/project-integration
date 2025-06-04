@@ -290,7 +290,6 @@ function bookAppointment() {
         <button onclick="this.parentElement.remove()">Remove</button>
       `;
       makeAppointment(patientEmail, date, time, reason, notes);
-      appointmentList.appendChild(entry);
       confirmation.textContent = `✅ Appointment booked for ${patient.username} on ${date}`;
       confirmation.style.color = "#2e7d32";
       location.reload(); 
@@ -310,7 +309,7 @@ async function updateAppointments() {
       const entry = document.createElement("div");
       entry.className = "appointment-entry";
       entry.innerHTML = `
-        <span>${appointment.user_id} – ${appointment.appointment_date} at ${appointment.appointment_time} for ${appointment.reason}</span>
+        <span>${appointment.username} – ${appointment.formatted_date} at ${appointment.formatted_date} for ${appointment.reason}\n Notes: ${appointment.notes}</span>
         <button onclick="this.parentElement.remove()">Remove</button>
       `;
       appointmentList.appendChild(entry);
