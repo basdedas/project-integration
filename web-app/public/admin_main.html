@@ -268,12 +268,8 @@
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-<<<<<<< HEAD
           name: patient.name,
           email: patient.email,  // this is what user page will use
-=======
-          username: patient,
->>>>>>> 123f2a13b91a81aa19fe5adee054036167e9e3f0
           date: date,
           reason: "Consultation with Dr. James"
         })
@@ -428,14 +424,9 @@ async function fetchAndDisplayPatients() {
 
       // Create dropdown option
       const option = document.createElement('option');
-<<<<<<< HEAD
       option.value = JSON.stringify({ name: patient.name, email: patient.email });
 option.textContent = patient.username;
 
-=======
-      option.value = patient.username;
-      option.textContent = patient.username;
->>>>>>> 123f2a13b91a81aa19fe5adee054036167e9e3f0
       select.appendChild(option);
     });
   } catch (error) {
