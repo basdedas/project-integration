@@ -268,8 +268,7 @@
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          name: patient.name,
-          email: patient.email,  // this is what user page will use
+          username: patient,
           date: date,
           reason: "Consultation with Dr. James"
         })
