@@ -241,10 +241,6 @@
         <div class="appointment-row">
           <div class="calendar-card">
             <h2>Book Appointment</h2>
-            <label for="patient-select">Select patient:</label><br>
-            <select id="patient-select">
-              <!-- Options will be added dynamically here -->
-            </select>
             <label for="appointment-date">Select a date:</label><br>
             <input type="date" id="appointment-date"><br>
             <input type="time" id="appointment-time"><br>
@@ -279,7 +275,11 @@
     
 function bookAppointment() {
   try {
-    const patient = document.getElementById("patient-select").value;
+    const patient = localStorage.getItem("selectedPatient");
+    if (!patient) {
+      throw new Error("No patient selected");
+    }
+    const patientEmail = JSON.parse(patient).email;
     const date = document.getElementById("appointment-date").value;
     const time = document.getElementById("appointment-time").value;
     const reason = document.getElementById("appointment-reason").value || "Routine Checkup";
@@ -292,7 +292,7 @@ function bookAppointment() {
         <span>${patient} – ${date}</span>
         <button onclick="this.parentElement.remove()">Remove</button>
       `;
-      makeAppointment(patient, date, time, reason, notes);
+      makeAppointment(patientEmail, date, time, reason, notes);
       appointmentList.appendChild(entry);
       confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
       confirmation.style.color = "#2e7d32";
@@ -494,6 +494,7 @@ function bookAppointment() {
       patientDiv.textContent = patient.username;
       patientDiv.onclick = () => updateStats(patient);
       patientsContainer.appendChild(patientDiv);
+      localStorage.setItem('selectedPatient', JSON.stringify(patient));
 
       // Create dropdown option
       const option = document.createElement('option');
