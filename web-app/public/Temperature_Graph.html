@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Temperature History</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -67,58 +67,92 @@
   </div>
 
   <script>
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    let temperatureChart = new Chart(ctx, {
-      type: 'line',
-      data: {},
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: true }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            suggestedMin: 34,
-            suggestedMax: 39
-          }
+   const ctx = document.getElementById('temperatureChart').getContext('2d');
+let temperatureChart = new Chart(ctx, {
+  type: 'line',
+  data: {},
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: context => `Temperature: ${context.parsed.y}°C`
         }
       }
-    });
-
-    const datasets = {
-      day: {
-        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
-        data: Array.from({length: 24}, () => (36 + Math.random() * 1.5).toFixed(1))
-      },
-      week: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        data: Array.from({length: 7}, () => (36 + Math.random() * 1.5).toFixed(1))
-      },
-      month: {
-        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
-        data: Array.from({length: 30}, () => (36 + Math.random() * 1.5).toFixed(1))
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        suggestedMin: 34,
+        suggestedMax: 40
       }
-    };
+    }
+  }
+});
 
-    function loadData(period) {
-      const selected = datasets[period];
-      temperatureChart.data.labels = selected.labels;
-      temperatureChart.data.datasets = [{
-        label: 'Temperature (°C)',
-        data: selected.data,
-        fill: true,
-        backgroundColor: 'rgba(255, 152, 0, 0.2)',
-        borderColor: '#ff9800',
-        tension: 0.3,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }];
-      temperatureChart.update();
+async function fetchHealthData() {
+  const res = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthdata');
+  if (!res.ok) throw new Error('Failed to fetch health data');
+  const data = await res.json();
+  // Filter for temperature data only
+  return data.filter(entry => entry.temperature != null);
+}
+
+function groupBy(data, period) {
+  const result = {};
+  const labels = [];
+  const values = [];
+
+  data.forEach(entry => {
+    const ts = new Date(entry.timestamp);
+    let label;
+
+    if (period === 'day') {
+      label = `${ts.getHours()}:00`;
+    } else if (period === 'week') {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      label = days[ts.getDay()];
+    } else if (period === 'month') {
+      label = `Day ${ts.getDate()}`;
     }
 
-    loadData('day');
+    if (!result[label]) result[label] = [];
+    result[label].push(entry.temperature);
+  });
+
+  for (const label in result) {
+    const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
+    labels.push(label);
+    values.push(parseFloat(avg.toFixed(1)));
+  }
+
+  return { labels, values };
+}
+
+async function loadData(period) {
+  try {
+    const allData = await fetchHealthData();
+    const { labels, values } = groupBy(allData, period);
+
+    temperatureChart.data.labels = labels;
+    temperatureChart.data.datasets = [{
+      label: 'Temperature (°C)',
+      data: values,
+      fill: true,
+      backgroundColor: 'rgba(255, 152, 0, 0.2)',
+      borderColor: '#ff9800',
+      tension: 0.3,
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }];
+    temperatureChart.update();
+  } catch (error) {
+    console.error('Error loading chart data:', error);
+  }
+}
+
+loadData('day');
   </script>
 </body>
 </html>
