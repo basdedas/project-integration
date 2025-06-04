@@ -290,7 +290,7 @@
 }
 */
 
-/*
+
 async function bookAppointment() {
   const selectedValue = document.getElementById("patient-select").value;
   const date = document.getElementById("appointment-date").value;
@@ -307,7 +307,6 @@ async function bookAppointment() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          name: patient.username,
           email: patient.email,
           date: date,
           reason: "Consultation with Doctor"
@@ -328,7 +327,7 @@ async function bookAppointment() {
     confirmation.style.color = "#d32f2f";
   }
 }
-*/
+
 
 
 
@@ -377,7 +376,7 @@ async function fetchAndDisplayPatients() {
       const item = document.createElement('div');
       item.classList.add('patient-item');
       item.innerHTML = `
-        <strong>${patient.username}</strong><br>
+        <strong>${patient.email}</strong><br>
         <span>${patient.email}</span>
         <hr>
       `;
@@ -429,56 +428,9 @@ async function fetchAndDisplayPatients() {
       }
     }
   </script>
-  <script>
-  async function fetchAndDisplayPatients() {
-  try {
-    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const patients = await response.json();
-
-    const patientsContainer = document.getElementById('patient-items-container');
-    const select = document.getElementById('patient-select');
-
-    // Clear existing items
-    patientsContainer.innerHTML = '';
-    select.innerHTML = '';
-
-    patients.forEach(patient => {
-      // Create patient div for sidebar
-      const patientDiv = document.createElement('div');
-      patientDiv.className = 'patient-item';
-      patientDiv.textContent = patient.username;
-      patientDiv.onclick = () => updateStats(patient.username);
-      patientsContainer.appendChild(patientDiv);
-
-      // Create dropdown option
-      const option = document.createElement('option');
-      option.value = JSON.stringify({ name: patient.name, email: patient.email });
-option.textContent = patient.username;
-
-      select.appendChild(option);
-    });
-  } catch (error) {
-    console.error('Error fetching patients:', error);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetchAndDisplayPatients();
-});
+ 
 
 
-</script>
 
 </body>
 </html>
