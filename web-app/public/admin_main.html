@@ -287,13 +287,13 @@
     console.log("Updating stats for:", userEmail);
 
     // Update the dashboard with fetched data
-    document.getElementById("heart-rate").textContent = loadData('heart_rate', 'avg_day', userEmail);
+    document.getElementById("heart-rate").textContent = loadData('heart_rate', 'avg_day', userEmail).healthType;
     // document.getElementById("heart-status").textContent = data.heartStatus;
-    document.getElementById("steps").textContent = loadData('steps', 'avg_day', userEmail);
+    document.getElementById("steps").textContent = loadData('steps', 'avg_day', userEmail).healthType;
     // document.getElementById("steps-status").textContent = data.stepsStatus;
-    document.getElementById("temperature").textContent = loadData('temperature', 'avg_day', userEmail);
+    document.getElementById("temperature").textContent = loadData('temperature', 'avg_day', userEmail).healthType;
     // document.getElementById("temp-status").textContent = data.tempStatus;
-    document.getElementById("oxygen").textContent = loadData('spO2', 'avg_day', userEmail);
+    document.getElementById("oxygen").textContent = loadData('spO2', 'avg_day', userEmail).healthType;
     // document.getElementById("oxygen-status").textContent = data.oxygenStatus;
 
     // Enable click and change cursor
