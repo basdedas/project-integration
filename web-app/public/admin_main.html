@@ -281,31 +281,21 @@
 }
 
     //Just for testing purposes, you can remove this later
-   async function updateStats(name) {
+   async function updateStats(patient) {
   try {
-    // Fetch patient data from the API
-    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/patientData?name=${encodeURIComponent(name)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+    let userEmail = patient.username; // Assuming username is the email
+    console.log("Updating stats for:", userEmail);
 
     const data = await response.json();
 
     // Update the dashboard with fetched data
-    document.getElementById("heart-rate").textContent = data.heartRate;
+    document.getElementById("heart-rate").textContent = loadData('heart_rate', 'avg_day', userEmail);
     document.getElementById("heart-status").textContent = data.heartStatus;
-    document.getElementById("steps").textContent = data.steps;
+    document.getElementById("steps").textContent = loadData('steps', 'avg_day', userEmail);
     document.getElementById("steps-status").textContent = data.stepsStatus;
-    document.getElementById("temperature").textContent = data.temperature;
+    document.getElementById("temperature").textContent = loadData('temperature', 'avg_day', userEmail);
     document.getElementById("temp-status").textContent = data.tempStatus;
-    document.getElementById("oxygen").textContent = data.oxygen;
+    document.getElementById("oxygen").textContent = loadData('spo2', 'avg_day', userEmail);
     document.getElementById("oxygen-status").textContent = data.oxygenStatus;
 
     // Enable click and change cursor
@@ -324,9 +314,10 @@
 }
 
 
-    async function loadData() {
+    async function loadData(healthType, dataType, userEmail) {
       try {
-        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/temperature?type=day&targetUserEmail=example@example.com`, {
+        let URL = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/${healthType}?type=${dataType}&targetUserEmail=${userEmail}`;
+        const response = await fetch(URL, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -416,8 +407,6 @@
     const patientsContainer = document.getElementById('patient-items-container');
     const select = document.getElementById('patient-select');
 
-    loadData();
-
     // Clear existing items
     patientsContainer.innerHTML = '';
     select.innerHTML = '';
@@ -427,7 +416,7 @@
       const patientDiv = document.createElement('div');
       patientDiv.className = 'patient-item';
       patientDiv.textContent = patient.username;
-      patientDiv.onclick = () => updateStats(patient.username);
+      patientDiv.onclick = () => updateStats(patient);
       patientsContainer.appendChild(patientDiv);
 
       // Create dropdown option
