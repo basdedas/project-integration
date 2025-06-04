@@ -288,13 +288,13 @@
 
     // Update the dashboard with fetched data
     document.getElementById("heart-rate").textContent = loadData('heart_rate', 'avg_day', userEmail);
-    document.getElementById("heart-status").textContent = data.heartStatus;
+    // document.getElementById("heart-status").textContent = data.heartStatus;
     document.getElementById("steps").textContent = loadData('steps', 'avg_day', userEmail);
-    document.getElementById("steps-status").textContent = data.stepsStatus;
+    // document.getElementById("steps-status").textContent = data.stepsStatus;
     document.getElementById("temperature").textContent = loadData('temperature', 'avg_day', userEmail);
-    document.getElementById("temp-status").textContent = data.tempStatus;
+    // document.getElementById("temp-status").textContent = data.tempStatus;
     document.getElementById("oxygen").textContent = loadData('spo2', 'avg_day', userEmail);
-    document.getElementById("oxygen-status").textContent = data.oxygenStatus;
+    // document.getElementById("oxygen-status").textContent = data.oxygenStatus;
 
     // Enable click and change cursor
     document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
