@@ -293,18 +293,34 @@
     console.log("Updating stats for:", userEmail);
 
     // Update the dashboard with fetched data
-    document.getElementById("heart-rate").textContent = await loadData('heart_rate', 'avg_day', userEmail).health_type;
-    console.log("Heart rate data loaded:", document.getElementById("heart-rate").textContent);
-    // document.getElementById("heart-status").textContent = data.heartStatus;
-    document.getElementById("steps").textContent = await loadData('steps', 'avg_day', userEmail).health_type;
-    console.log("Steps data loaded:", document.getElementById("steps").textContent);
-    // document.getElementById("steps-status").textContent = data.stepsStatus;
-    document.getElementById("temperature").textContent = await loadData('temperature', 'avg_day', userEmail).health_type;
-    console.log("Temperature data loaded:", document.getElementById("temperature").textContent);
-    // document.getElementById("temp-status").textContent = data.tempStatus;
-    document.getElementById("oxygen").textContent = await loadData('spO2', 'avg_day', userEmail).health_type;
-    console.log("Blood oxygen data loaded:", document.getElementById("spO2").textContent);
-    // document.getElementById("oxygen-status").textContent = data.oxygenStatus;
+    const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
+    console.log('Fetched Heart Rate Data:', heartRateData); // Debug the raw data
+    const heartRateValue = heartRateData && typeof heartRateData.health_type === 'number'
+      ? heartRateData.health_type.toFixed(1)
+      : '--';
+    document.getElementById("heart-rate").textContent = heartRateValue;
+    console.log("Heart rate displayed:", heartRateValue); // Debug the value being set
+
+    const stepsData = await loadData('steps', 'avg_day', userEmail);
+    console.log('Fetched Steps Data:', stepsData); // Debug the raw data
+    document.getElementById("steps").textContent = stepsData && typeof stepsData.health_type === 'number'
+      ? stepsData.health_type.toFixed(1)
+      : '--';
+    console.log("Steps displayed:", document.getElementById("steps").textContent); // Debug the value being set
+
+    const temperatureData = await loadData('temperature', 'avg_day', userEmail);
+    console.log('Fetched Temperature Data:', temperatureData); // Debug the raw data
+    document.getElementById("temperature").textContent = temperatureData && typeof temperatureData.health_type === 'number'
+      ? temperatureData.health_type.toFixed(1)
+      : '--';
+    console.log("Temperature displayed:", document.getElementById("temperature").textContent); // Debug the value being set
+
+    const oxygenData = await loadData('spO2', 'avg_day', userEmail);
+    console.log('Fetched Blood Oxygen Data:', oxygenData); // Debug the raw data
+    document.getElementById("oxygen").textContent = oxygenData && typeof oxygenData.health_type === 'number'
+      ? oxygenData.health_type.toFixed(1)
+      : '--';
+    console.log("Blood oxygen displayed:", document.getElementById("oxygen").textContent); // Debug the value being set
 
     // Enable click and change cursor
     document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
