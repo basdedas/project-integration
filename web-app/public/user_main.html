@@ -180,7 +180,7 @@
     <div class="top-bar">
       <div>
        <h1>Health Overview</h1>
-        <p id="welcome-message"></p>
+           <div>Welcome, <span id="username"></span>!</div>s
 
         <p id="current-date">Loading date...</p>
 
@@ -270,21 +270,14 @@
   </div>
 <script>
 
-  fetch('/api/status')
-            .then(response => response.json())
-            .then(data => {
-                const welcomeMessage = document.getElementById('welcome-message');
-                if (data.status === 'User is logged in') {
-                    welcomeMessage.innerText = `Welcome, ${data.user.username}!`;
-                } else {
-                    welcomeMessage.innerText = 'Error';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user status:', error);
-                document.getElementById('welcome-message').innerText = 'Error retrieving user data.';
-            });
+function fetchUsername() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const username = user ? user.username : 'User'; // Default to 'User' if not found
+        document.getElementById('username').textContent = username;
+    }
 
+    window.onload = fetchUsername; 
+  
 
   function renderMedicationsInBubble() {
     const medList = document.getElementById('medList');
