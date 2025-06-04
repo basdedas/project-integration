@@ -99,7 +99,7 @@ async function fetchHealthData() {
   if (!res.ok) throw new Error('Failed to fetch health data');
   const data = await res.json();
   // Filter for steps data only
-  return data.filter(entry => entry.steps != null);
+  //return data.filter(entry => entry.steps != null);
 }
 
 function groupBy(data, period) {
