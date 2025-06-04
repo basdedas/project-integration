@@ -286,8 +286,6 @@
     let userEmail = patient.username; // Assuming username is the email
     console.log("Updating stats for:", userEmail);
 
-    const data = await response.json();
-
     // Update the dashboard with fetched data
     document.getElementById("heart-rate").textContent = loadData('heart_rate', 'avg_day', userEmail);
     document.getElementById("heart-status").textContent = data.heartStatus;
