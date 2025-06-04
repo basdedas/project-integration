@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Heart Rate History</title>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -145,11 +146,31 @@
 
   async function fetchHeartRateData(type) {
     let link = 'https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/heart_rate?type=${type}'
-    if (localStorage.getItem('user')){
-      if (localStorage.getItem('user').administrator_id){
-        patientEmail = JSON.parse(localStorage.getItem('selectedPatient')).email;
-        link = '${link}&targetUserEmail=${patientEmail}';
+    let patientEmail = '';
+    const userJSON = JSON.parse(localStorage.getItem('user'));
+    const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
+
+    let user = null;
+
+    try {
+      if (userJSON) user = JSON.parse(userJSON);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      return { labels: [], data: [] }; 
+    }
+
+    if (user && user.administrator_id) {
+      if (selectedPatient && selectedPatient.email) {
+        patientEmail = selectedPatient.email;
+        link = `${link}&targetUserEmail=${patientEmail}`;
+      } else {
+        console.warn('No selected patient email found');
       }
+    } else if (user && user.email) {
+      patientEmail = user.email;
+      link = `${link}&targetUserEmail=${patientEmail}`;
+    } else {
+      console.warn('No user or patient email found');
     }
     const response = await fetch(``, {
       method: 'GET',
