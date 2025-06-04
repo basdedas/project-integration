@@ -295,7 +295,7 @@
     // Update the dashboard with fetched data
     const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
     console.log('Fetched Heart Rate Data:', heartRateData); // Debug the raw data
-    const heartRateValue = heartRateData && typeof heartRateData.health_type === 'number'
+    const heartRateValue = heartRateData 
       ? heartRateData.health_type.toFixed(1)
       : '--';
     document.getElementById("heart-rate").textContent = heartRateValue;
@@ -303,21 +303,21 @@
 
     const stepsData = await loadData('steps', 'avg_day', userEmail);
     console.log('Fetched Steps Data:', stepsData); // Debug the raw data
-    document.getElementById("steps").textContent = stepsData && typeof stepsData.health_type === 'number'
+    document.getElementById("steps").textContent = stepsData
       ? stepsData.health_type.toFixed(1)
       : '--';
     console.log("Steps displayed:", document.getElementById("steps").textContent); // Debug the value being set
 
     const temperatureData = await loadData('temperature', 'avg_day', userEmail);
     console.log('Fetched Temperature Data:', temperatureData); // Debug the raw data
-    document.getElementById("temperature").textContent = temperatureData && typeof temperatureData.health_type === 'number'
+    document.getElementById("temperature").textContent = temperatureData
       ? temperatureData.health_type.toFixed(1)
       : '--';
     console.log("Temperature displayed:", document.getElementById("temperature").textContent); // Debug the value being set
 
     const oxygenData = await loadData('spO2', 'avg_day', userEmail);
     console.log('Fetched Blood Oxygen Data:', oxygenData); // Debug the raw data
-    document.getElementById("oxygen").textContent = oxygenData && typeof oxygenData.health_type === 'number'
+    document.getElementById("oxygen").textContent = oxygenData
       ? oxygenData.health_type.toFixed(1)
       : '--';
     console.log("Blood oxygen displayed:", document.getElementById("oxygen").textContent); // Debug the value being set
