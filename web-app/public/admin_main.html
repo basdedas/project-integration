@@ -49,6 +49,11 @@
       background: #e3f2fd;
       transform: translateY(-2px);
     }
+    .patient-item.active {
+      background: #95cdfa;
+      transform: translateY(-2px);
+      font-weight: bold;
+    }
     .circle-bar {
       width: 120px;
       height: 120px;
@@ -350,9 +355,18 @@ async function updateStats(patient) {
   try {
     localStorage.removeItem('selectedPatient'); // Clear previous selection
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
+    
+    patientItems.forEach(item => item.classList.remove('active'));
 
     let userEmail = patient.email; // Assuming username is the email
     console.log("Updating stats for:", userEmail);
+
+    const activePatient = document.querySelector('.patient-item.active');
+    patientItems.forEach(item => {
+      if (item.textContent === patient.username) {
+        item.classList.add('active');
+      }
+    });
 
     // Update the dashboard with fetched data
     const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
