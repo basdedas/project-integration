@@ -323,7 +323,7 @@ async function updateAppointments() {
     console.error("Error updating appointments:", error);
   }
 }
-remove_appointment(appointmentId) {
+async function remove_appointment(appointmentId) {
   fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointment/remove/${appointmentId}`, {
     method: 'GET',
     headers: {
