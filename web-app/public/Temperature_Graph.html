@@ -96,7 +96,7 @@ async function fetchHealthData() {
   if (!res.ok) throw new Error('Failed to fetch health data');
   const data = await res.json();
   // Filter for temperature data only
-  return data.filter(entry => entry.temperature != null);
+  //return data.filter(entry => entry.temperature != null);
 }
 
 function groupBy(data, period) {
@@ -124,7 +124,7 @@ function groupBy(data, period) {
   for (const label in result) {
     const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
     labels.push(label);
-    values.push(parseFloat(avg.toFixed(1)));
+    values.push(Math.round(avg));
   }
 
   return { labels, values };
