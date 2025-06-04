@@ -268,9 +268,7 @@
     </div>
   </div>
 
-  <script>
-    const appointmentList = document.getElementById("appointments");
-    
+  <script>    
 function bookAppointment() {
   try {
     const patient = localStorage.getItem("selectedPatient");
@@ -287,22 +285,41 @@ function bookAppointment() {
       const entry = document.createElement("div");
       entry.className = "appointment-entry";
       entry.innerHTML = `
-        <span>${patient} – ${date}</span>
+        <span>${patient.username} – ${date}</span>
         <button onclick="this.parentElement.remove()">Remove</button>
       `;
       makeAppointment(patientEmail, date, time, reason, notes);
       appointmentList.appendChild(entry);
-      confirmation.textContent = `✅ Appointment booked for ${patient} on ${date}`;
+      confirmation.textContent = `✅ Appointment booked for ${patient.username} on ${date}`;
       confirmation.style.color = "#2e7d32";
+      location.reload(); 
   }} catch (error) {
     console.error("Error booking appointment:", error);
     confirmation.textContent = "⚠️ Please select both patient and date.";
     confirmation.style.color = "#d32f2f";
   }
+};
+
+async function updateAppointments() {
+  try {
+    const appointments = await getAppointments();
+    const appointmentList = document.getElementById("appointments");
+    appointmentList.innerHTML = '';
+    appointments.forEach(appointment => {
+      const entry = document.createElement("div");
+      entry.className = "appointment-entry";
+      entry.innerHTML = `
+        <span>${appointment.user_id} – ${appointment.appointment_date} at ${appointment.appointment_time} for ${appointment.reason}</span>
+        <button onclick="this.parentElement.remove()">Remove</button>
+      `;
+      appointmentList.appendChild(entry);
+    });
+  } catch (error) {
+    console.error("Error updating appointments:", error);
+  }
 }
 
-    //Just for testing purposes, you can remove this later
-   async function updateStats(patient) {
+async function updateStats(patient) {
   try {
     let userEmail = patient.email; // Assuming username is the email
     console.log("Updating stats for:", userEmail);
@@ -399,9 +416,6 @@ function bookAppointment() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to make appointment');
-        }
         console.log("Appointment made successfully:", data);
       } catch (error) {
         console.error("Error making appointment:", error);
