@@ -306,10 +306,10 @@ async function bookAppointment() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          name: patient.name,
+          name: patient.username,
           email: patient.email,
           date: date,
-          reason: "Consultation with Dr. James"
+          reason: "Consultation with Doctor"
         })
       });
 
