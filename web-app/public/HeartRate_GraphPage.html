@@ -145,7 +145,7 @@
   // }
 
   async function fetchHeartRateData(type) {
-    let link = 'https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/heart_rate?type=${type}';
+    let link = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/heart_rate?type=${type}`;
     let patientEmail = '';
     const userJSON = JSON.parse(localStorage.getItem('user'));
     const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
