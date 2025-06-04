@@ -248,8 +248,10 @@
 
     <div class="footer-section">
       <div class="appointment">
-        <strong>Upcoming Appointment:</strong><br> August 14, 2025 – Consultation with Dr. James
-      </div>
+  <strong>Upcoming Appointment:</strong><br>
+  <div id="user-appointment">....</div>
+</div>
+
       <a href="Medications.html" class="medications" style="text-decoration: none; color: inherit;">
   <h2>Medications</h2>
   <div id="medList">
@@ -300,6 +302,7 @@
   }
 
   renderMedicationsInBubble();
+
 
   // Refresh every minute
   setInterval(renderMedicationsInBubble, 60000);
@@ -371,6 +374,43 @@ function updateWater(change) {
 // INITIALIZE EVERYTHING ON PAGE LOAD
 loadGoalsAndProgress();
 
+async function fetchUserAppointments() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+
+  try {
+    const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointments', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch appointments");
+
+    const allAppointments = await response.json();
+    const userAppointments = allAppointments.filter(a => a.name === user.name);
+
+    const upcomingDiv = document.getElementById("user-appointment");
+
+    if (userAppointments.length === 0) {
+      upcomingDiv.textContent = "No appointments found.";
+    } else {
+      const next = userAppointments[0];
+      upcomingDiv.textContent = `${next.date} – ${next.reason}`;
+    }
+  } catch (error) {
+    console.error("Error fetching user appointments:", error);
+    document.getElementById("user-appointment").textContent = "Error loading appointment.";
+  }
+}
+
+fetchUserAppointments();
+
+
 </script>
+
 </body>
+
 </html>
