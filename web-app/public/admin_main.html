@@ -269,9 +269,8 @@
             August 14, 2025 – Consultation with Dr. James
           </div>
           <div class="footer-card">
-            <h2>Medications</h2>
-            <p>Paracetamol – Time left: 2h 15m</p>
-            <p>Ibuprofen – Time left: 5h 00m</p>
+            <div class="medication-list" id="medication-list">
+            </div>
           </div>
         </div>
       </div>
@@ -348,6 +347,50 @@ async function remove_appointment(appointmentId) {
   })
   .catch(error => {
     console.error("Error removing appointment:", error);
+  });
+}
+
+function updateMedication() {
+  const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
+  getMedicationData(selectedPatient.user_id)
+    .then(data => {
+      const medicationList = document.getElementById("medication-list");
+      medicationList.innerHTML = '';
+      data.forEach(med => {
+        const entry = document.createElement("div");
+        entry.className = "medication-entry";
+        entry.innerHTML = `
+          <span>${med.med_name} – Dosage: ${med.dosage} - Between ${med.begin_date} and ${med.end_date}. \n Notes: ${med.notes}</span>
+          <button onclick="remove_medication(${med.med_name})">Remove</button>
+        `;
+        medicationList.appendChild(entry);
+      });
+    })
+    .catch(error => {
+      console.error("Error updating medication:", error);
+    });
+}
+
+function remove_medication(medicationId) {
+  fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds/remove/${medicationId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Medication removed successfully:", data);
+    updateMedication(); // Refresh the medication list
+  })
+  .catch(error => {
+    console.error("Error removing medication:", error);
   });
 }
 
@@ -502,9 +545,9 @@ async function updateStats(patient) {
       }
     }
 
-    async function getMedicationData() {
+    async function getMedicationData(user_id) {
       try {
-        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds?user_id=8`, {
+        const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds?user_id=${user_id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
