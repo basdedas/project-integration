@@ -300,13 +300,18 @@
       : '--';
     document.getElementById("heart-rate").textContent = heartRateValue;
     console.log("Heart rate displayed:", heartRateValue); // Debug the value being set
-
+    document.getElementById("heart-status").textContent = heartRateData
+      ? heartRateData.health_type > 100 || heartRateData.health_type < 60 ? 'High ⁉️' : 'Normal ✅'
+      : '--';
     const stepsData = await loadData('steps', 'avg_day', userEmail);
     console.log('Fetched Steps Data:', stepsData); // Debug the raw data
     document.getElementById("steps").textContent = stepsData
       ? stepsData.health_type.toFixed(1)
       : '--';
     console.log("Steps displayed:", document.getElementById("steps").textContent); // Debug the value being set
+    document.getElementById("steps-status").textContent = stepsData
+      ? stepsData.health_type < 1000 ? 'Low ⚠️' : 'Good 👍'
+      : '--';
 
     const temperatureData = await loadData('temperature', 'avg_day', userEmail);
     console.log('Fetched Temperature Data:', temperatureData); // Debug the raw data
@@ -314,6 +319,9 @@
       ? temperatureData.health_type.toFixed(1)
       : '--';
     console.log("Temperature displayed:", document.getElementById("temperature").textContent); // Debug the value being set
+    document.getElementById("temp-status").textContent = temperatureData
+      ? temperatureData.health_type < 36.5 || temperatureData.health_type > 37.5 ? 'Abnormal ⚠️' : 'Normal ✅'
+      : '--';
 
     const oxygenData = await loadData('spO2', 'avg_day', userEmail);
     console.log('Fetched Blood Oxygen Data:', oxygenData); // Debug the raw data
@@ -321,6 +329,9 @@
       ? oxygenData.health_type.toFixed(1)
       : '--';
     console.log("Blood oxygen displayed:", document.getElementById("oxygen").textContent); // Debug the value being set
+    document.getElementById("oxygen-status").textContent = oxygenData
+      ? oxygenData.health_type < 95 ? 'Low ⚠️' : 'Normal ✅'
+      : '--';
 
     // Enable click and change cursor
     document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
@@ -371,7 +382,7 @@
       throw new Error('Network response was not ok');
     }
     console.log("Fetching patient data...");
-    return response.json(); // Must return users
+    return response.json();
     }
 
     async function getAppointments() {
