@@ -391,7 +391,6 @@ function updateMedication() {
           <button onclick="remove_medication('${med.med_name}')">Remove</button>
         `;
         medicationList.appendChild(entry);
-        location.reload();
       });
     })
     .catch(error => {
