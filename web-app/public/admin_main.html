@@ -532,8 +532,13 @@ function remove_medication(medicationId) {
       const patientDiv = document.createElement('div');
       patientDiv.className = 'patient-item';
       patientDiv.textContent = patient.username;
-      patientDiv.onclick = () => updateStats(patient);
+      patientDiv.onclick = () => {
+    localStorage.setItem('selectedPatient', JSON.stringify(patient));
+    updateStats(patient); 
+  };
       patientsContainer.appendChild(patientDiv);
+
+
 
       // Create dropdown option
       const option = document.createElement('option');
@@ -551,6 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function updateStats(patient) {
+
   try {
     // Use the correct field name - might be user_id instead of id
     const patientId = patient.id || patient.user_id || patient.userId;
@@ -599,6 +605,9 @@ async function updateStats(patient) {
     setDefaultValues();
   }
 }
+
+localStorage.setItem('selectedPatient', JSON.stringify(patient));
+
 
 function setDefaultValues() {
   document.getElementById('heart-rate').textContent = '--';
