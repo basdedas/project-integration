@@ -68,98 +68,115 @@
 
   <script>
     const ctx = document.getElementById('stepsChart').getContext('2d');
-let stepsChart = new Chart(ctx, {
-  type: 'line',
-  data: {},
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: context => `Steps: ${context.parsed.y}`
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: false,
-        suggestedMin:0,
-        suggestedMax:10000
+    let stepsChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: context => `Steps: ${context.parsed.y}`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            suggestedMin: 0,
+            suggestedMax: 10000
           }
         }
       }
-  });
+    });
 
-async function fetchHealthData() {
-   try {
-        const patient = JSON.parse(localStorage.getItem('selectedPatient'));
-        if (!patient) throw new Error("No patient selected");
+    // ✅ Group and average steps by period
+    function groupBy(data, period) {
+      const result = {};
+      const labels = [];
+      const values = [];
 
-        const patientId = patient.id || patient.user_id || patient.userId;
-        const token = localStorage.getItem('token');
+      data.forEach(entry => {
+        const ts = new Date(entry.timestamp);
+        let label;
 
-        const res = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patientId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-function groupBy(data, period) {
-  const result = {};
-  const labels = [];
-  const values = [];
+        if (period === 'day') {
+          label = `${ts.getHours()}:00`;
+        } else if (period === 'week') {
+          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          label = days[ts.getDay()];
+        } else if (period === 'month') {
+          label = `Day ${ts.getDate()}`;
+        }
 
-  data.forEach(entry => {
-    const ts = new Date(entry.timestamp);
-    let label;
+        if (!result[label]) result[label] = [];
+        result[label].push(entry.steps);
+      });
 
-    if (period === 'day') {
-      label = `${ts.getHours()}:00`;
-    } else if (period === 'week') {
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      label = days[ts.getDay()];
-    } else if (period === 'month') {
-      label = `Day ${ts.getDate()}`;
+      for (const label in result) {
+        const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
+        labels.push(label);
+        values.push(Math.round(avg));
+      }
+
+      return { labels, values };
     }
 
-    if (!result[label]) result[label] = [];
-    result[label].push(entry.steps);
-  });
+    // ✅ Fetch step data from API
+    async function fetchHealthData() {
+      const patient = JSON.parse(localStorage.getItem('selectedPatient'));
+      const token = localStorage.getItem('token');
 
-  for (const label in result) {
-    const avg = result[label].reduce((a, b) => a + b, 0) / result[label].length;
-    labels.push(label);
-    values.push(Math.round(avg));
-  }
+      if (!patient || !token) {
+        throw new Error("Missing selected patient or token in localStorage.");
+      }
 
-  return { labels, values };
-}
+      const patientId = patient.id || patient.user_id || patient.userId;
 
-async function loadData(period) {
-  try {
-    const allData = await fetchHealthData();
-    const { labels, values } = groupBy(allData, period);
+      const res = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patientId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-    stepsChart.data.labels = labels;
-    stepsChart.data.datasets = [{
-      label: 'Steps',
-      data: values,
-      fill: true,
-      backgroundColor: 'rgba(33, 150, 243, 0.2)',
-      borderColor: '#2196f3',
-      tension: 0.3,
-      pointRadius: 5,
-      pointHoverRadius: 7
-    }];
-    stepsChart.update();
-  } catch (error) {
-    console.error('Error loading chart data:', error);
-  }
-}
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
-loadData('day');
+      return await res.json();
+    }
+
+    // ✅ Load and display data in chart
+    async function loadData(period) {
+      try {
+        const allData = await fetchHealthData();
+        const { labels, values } = groupBy(allData, period);
+
+        stepsChart.data.labels = labels;
+        stepsChart.data.datasets = [{
+          label: 'Steps',
+          data: values,
+          fill: true,
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          borderColor: '#2196f3',
+          tension: 0.3,
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }];
+        stepsChart.update();
+      } catch (error) {
+        console.error('Error loading chart data:', error);
+        alert("Failed to load step data. Make sure you're logged in and have a patient selected.");
+      }
+    }
+
+    // ✅ Default load
+    loadData('day');
   </script>
 </body>
 </html>
