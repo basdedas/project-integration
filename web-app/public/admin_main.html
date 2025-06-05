@@ -185,6 +185,35 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
+    .medication-list {
+      max-height: 200px;
+      overflow-y: auto;
+
+      background: #f9fbe7;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .medication-entry {
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+    .medication-entry button {
+      background-color: #ef5350;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+
     #appointments {
       overflow-y: auto;
       margin-top: 10px;
@@ -249,7 +278,6 @@
         <div class="appointment-row">
           <div class="calendar-card">
             <h2>Book Appointment</h2>
-            <label for="appointment-date">Select a date:</label><br>
             <input type="date" id="appointment-date"><br>
             <input type="time" id="appointment-time"><br>
             <input type="text" id="appointment-reason" placeholder="Reason for appointment"><br>
@@ -268,9 +296,8 @@
             <strong>Upcoming Appointment:</strong><br>
             August 14, 2025 – Consultation with Dr. James
           </div>
-          <div class="footer-card">
+          <div class="footer-card" class="medication-list" id="medication-list">
             <div class="medication-list" id="medication-list">
-            </div>
           </div>
         </div>
       </div>
