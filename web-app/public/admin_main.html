@@ -271,16 +271,17 @@
       </div>
       <div class="main-content">
         <div class="main-section">
-          <div class="card" id="card-heart" style="background:#ffe5ec;">
+          <a href="heartratepatient" class="card" id="card-heart" style="background:#ffe5ec;">
             <h3>Heart Rate</h3>
             <div class="value" id="heart-rate">--</div>
             <div class="status" id="heart-status">--</div>
-          </div>
-          <div class="card" id="card-steps" style="background:#e0f7fa;">
+          </a>
+
+          <a href="steppatient.html" class="card" id="card-steps" style="background:#e0f7fa;">
             <h3>Steps</h3>
             <div class="value" id="steps">--</div>
             <div class="status" id="steps-status">--</div>
-          </div>
+          </a>
           <div class="card" id="card-temp" style="background:#fff3e0;">
             <h3>Temperature</h3>
             <div class="value" id="temperature">--</div>
@@ -494,81 +495,7 @@ function remove_medication(medicationId) {
   });
 }
 
-async function updateStats(patient) {
-  try {
-    localStorage.removeItem('selectedPatient'); // Clear previous selection
-    localStorage.setItem('selectedPatient', JSON.stringify(patient));
-    
-    const patientItems = document.querySelectorAll('.patient-item');
-    patientItems.forEach(item => item.classList.remove('active'));
 
-    let userEmail = patient.email; // Assuming username is the email
-    console.log("Updating stats for:", userEmail);
-
-    const activePatient = document.querySelector('.patient-item.active');
-    patientItems.forEach(item => {
-      if (item.textContent === patient.username) {
-        item.classList.add('active');
-      }
-    });
-
-    updateMedication();
-
-    // Update the dashboard with fetched data
-    const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
-    console.log('Fetched Heart Rate Data:', heartRateData); // Debug the raw data
-    const heartRateValue = heartRateData 
-      ? heartRateData.health_type.toFixed(1)
-      : '--';
-    document.getElementById("heart-rate").textContent = heartRateValue;
-    console.log("Heart rate displayed:", heartRateValue); // Debug the value being set
-    document.getElementById("heart-status").textContent = heartRateData
-      ? heartRateData.health_type > 100 || heartRateData.health_type < 60 ? 'High ⁉️' : 'Normal ✅'
-      : '--';
-    const stepsData = await loadData('steps', 'avg_day', userEmail);
-    console.log('Fetched Steps Data:', stepsData); // Debug the raw data
-    document.getElementById("steps").textContent = stepsData
-      ? stepsData.health_type.toFixed(1)
-      : '--';
-    console.log("Steps displayed:", document.getElementById("steps").textContent); // Debug the value being set
-    document.getElementById("steps-status").textContent = stepsData
-      ? stepsData.health_type < 1000 ? 'Low ⚠️' : 'Good 👍'
-      : '--';
-
-    const temperatureData = await loadData('temperature', 'avg_day', userEmail);
-    console.log('Fetched Temperature Data:', temperatureData); // Debug the raw data
-    document.getElementById("temperature").textContent = temperatureData
-      ? temperatureData.health_type.toFixed(1)
-      : '--';
-    console.log("Temperature displayed:", document.getElementById("temperature").textContent); // Debug the value being set
-    document.getElementById("temp-status").textContent = temperatureData
-      ? temperatureData.health_type < 36.5 || temperatureData.health_type > 37.5 ? 'Abnormal ⚠️' : 'Normal ✅'
-      : '--';
-
-    const oxygenData = await loadData('spO2', 'avg_day', userEmail);
-    console.log('Fetched Blood Oxygen Data:', oxygenData); // Debug the raw data
-    document.getElementById("oxygen").textContent = oxygenData
-      ? oxygenData.health_type.toFixed(1)
-      : '--';
-    console.log("Blood oxygen displayed:", document.getElementById("oxygen").textContent); // Debug the value being set
-    document.getElementById("oxygen-status").textContent = oxygenData
-      ? oxygenData.health_type < 95 ? 'Low ⚠️' : 'Normal ✅'
-      : '--';
-
-    // Enable click and change cursor
-    document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
-    document.getElementById("card-steps").onclick = () => location.href = 'StepCount_GraphPage.html';
-    document.getElementById("card-temp").onclick = () => location.href = 'Temperature_Graph.html';
-    document.getElementById("card-oxygen").onclick = () => location.href = 'BloodOxygen_Graph.html';
-
-    document.getElementById("card-heart").style.cursor = "pointer";
-    document.getElementById("card-steps").style.cursor = "pointer";
-    document.getElementById("card-temp").style.cursor = "pointer";
-    document.getElementById("card-oxygen").style.cursor = "pointer";
-  } catch (error) {
-    console.error("Error fetching patient data:", error);
-  }
-}
 
 
     async function loadData(healthType, dataType, userEmail) {
@@ -612,21 +539,6 @@ async function updateStats(patient) {
       }
     }
 
-    async function getPatientData() {
-      // Simulate fetching patient data
-      const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }});
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    console.log("Fetching patient data...");
-    return response.json();
-    }
-
     async function getAppointments() {
       try {
         const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/appointments`, {
@@ -666,8 +578,8 @@ async function updateStats(patient) {
         console.error("Error fetching medication data:", error);
       }
     }
-  </script>
-  <script>
+  
+  
   async function fetchAndDisplayPatients() {
   try {
     const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/users', {
@@ -692,8 +604,13 @@ async function updateStats(patient) {
       const patientDiv = document.createElement('div');
       patientDiv.className = 'patient-item';
       patientDiv.textContent = patient.username;
-      patientDiv.onclick = () => updateStats(patient);
+      patientDiv.onclick = () => {
+    localStorage.setItem('selectedPatient', JSON.stringify(patient));
+    updateStats(patient); 
+  };
       patientsContainer.appendChild(patientDiv);
+
+
 
       // Create dropdown option
       const option = document.createElement('option');
@@ -709,6 +626,95 @@ async function updateStats(patient) {
 document.addEventListener('DOMContentLoaded', () => {
   fetchAndDisplayPatients();
 });
+
+async function updateStats(patient) {
+
+  try {
+    // Use the correct field name - might be user_id instead of id
+    const patientId = patient.id || patient.user_id || patient.userId;
+    
+    // ADD DEBUGGING
+    console.log('Patient object in updateStats:', patient);
+    console.log('Using patient ID:', patientId);
+    
+    if (!patientId) {
+      console.error('No patient ID found in patient object');
+      setDefaultValues();
+      return;
+    }
+    
+    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patientId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch health data');
+    const data = await response.json(); // data is an array
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setDefaultValues();
+      return;
+    }
+
+    // Find the latest entry by timestamp
+    const latest = data.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
+
+    // Fill the cards with the latest values
+    document.getElementById('heart-rate').textContent = latest.heart_rate ?? '--';
+    document.getElementById('heart-status').textContent = getHeartStatus(latest.heart_rate);
+
+    document.getElementById('steps').textContent = latest.steps ?? '--';
+    document.getElementById('steps-status').textContent = getStepsStatus(latest.steps);
+
+    document.getElementById('temperature').textContent = latest.temperature ?? '--';
+    document.getElementById('temp-status').textContent = getTempStatus(latest.temperature);
+
+    document.getElementById('oxygen').textContent = latest.spo2 ?? '--';
+    document.getElementById('oxygen-status').textContent = getOxygenStatus(latest.spo2);
+
+  } catch (error) {
+    setDefaultValues();
+  }
+}
+
+localStorage.setItem('selectedPatient', JSON.stringify(patient));
+
+
+function setDefaultValues() {
+  document.getElementById('heart-rate').textContent = '--';
+  document.getElementById('heart-status').textContent = '--';
+  document.getElementById('steps').textContent = '--';
+  document.getElementById('steps-status').textContent = '--';
+  document.getElementById('temperature').textContent = '--';
+  document.getElementById('temp-status').textContent = '--';
+  document.getElementById('oxygen').textContent = '--';
+  document.getElementById('oxygen-status').textContent = '--';
+}
+
+// Status helper functions as before...
+function getHeartStatus(rate) {
+  if (rate == null) return '--';
+  if (rate < 60) return "Low";
+  if (rate > 100) return "High";
+  return "Normal";
+}
+function getStepsStatus(steps) {
+  if (steps == null) return '--';
+  if (steps < 5000) return "Below goal";
+  return "Good";
+}
+function getTempStatus(temp) {
+  if (temp == null) return '--';
+  if (temp < 36.5) return "Low";
+  if (temp > 37.5) return "Fever";
+  return "Normal";
+}
+function getOxygenStatus(spo2) {
+  if (spo2 == null) return '--';
+  if (spo2 < 95) return "Low";
+  return "Normal";
+}
 
 logout = () => {
   localStorage.removeItem('token');
