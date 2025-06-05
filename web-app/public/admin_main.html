@@ -279,7 +279,6 @@
 
   <script>    
   updateAppointments();  
-  updateMedication();
 function bookAppointment() {
   try {
     const patient = localStorage.getItem("selectedPatient");
@@ -412,6 +411,8 @@ async function updateStats(patient) {
         item.classList.add('active');
       }
     });
+
+    updateMedication();
 
     // Update the dashboard with fetched data
     const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
