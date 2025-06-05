@@ -388,9 +388,10 @@ function updateMedication() {
         entry.className = "medication-entry";
         entry.innerHTML = `
           <span>${med.med_name} – Dosage: ${med.dosage} - Between ${med.begin_date} and ${med.end_date}. \n Notes: ${med.notes}</span>
-          <button onclick="remove_medication(${med.med_name})">Remove</button>
+          <button onclick="remove_medication('${med.med_name}')">Remove</button>
         `;
         medicationList.appendChild(entry);
+        location.reload();
       });
     })
     .catch(error => {
