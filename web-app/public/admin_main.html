@@ -399,7 +399,8 @@ function updateMedication() {
 }
 
 function remove_medication(medicationId) {
-  fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds/remove/${medicationId}`, {
+  let user_id = JSON.parse(localStorage.getItem('selectedPatient')).user_id;
+  fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds/remove/${medicationId}?user_id${user_id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
