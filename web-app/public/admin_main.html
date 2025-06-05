@@ -638,6 +638,78 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAndDisplayPatients();
 });
 
+async function updateStats(patient) {
+  try {
+    const response = await fetch(`/api/healthpatients/${patient.id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch health data');
+    const data = await response.json(); // data is an array
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setDefaultValues();
+      return;
+    }
+
+    // Find the latest entry by timestamp
+    const latest = data.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
+
+    // Fill the cards with the latest values
+    document.getElementById('heart-rate').textContent = latest.heart_rate ?? '--';
+    document.getElementById('heart-status').textContent = getHeartStatus(latest.heart_rate);
+
+    document.getElementById('steps').textContent = latest.steps ?? '--';
+    document.getElementById('steps-status').textContent = getStepsStatus(latest.steps);
+
+    document.getElementById('temperature').textContent = latest.temperature ?? '--';
+    document.getElementById('temp-status').textContent = getTempStatus(latest.temperature);
+
+    document.getElementById('oxygen').textContent = latest.spo2 ?? '--';
+    document.getElementById('oxygen-status').textContent = getOxygenStatus(latest.spo2);
+
+  } catch (error) {
+    setDefaultValues();
+  }
+}
+
+function setDefaultValues() {
+  document.getElementById('heart-rate').textContent = '--';
+  document.getElementById('heart-status').textContent = '--';
+  document.getElementById('steps').textContent = '--';
+  document.getElementById('steps-status').textContent = '--';
+  document.getElementById('temperature').textContent = '--';
+  document.getElementById('temp-status').textContent = '--';
+  document.getElementById('oxygen').textContent = '--';
+  document.getElementById('oxygen-status').textContent = '--';
+}
+
+// Status helper functions as before...
+function getHeartStatus(rate) {
+  if (rate == null) return '--';
+  if (rate < 60) return "Low";
+  if (rate > 100) return "High";
+  return "Normal";
+}
+function getStepsStatus(steps) {
+  if (steps == null) return '--';
+  if (steps < 5000) return "Below goal";
+  return "Good";
+}
+function getTempStatus(temp) {
+  if (temp == null) return '--';
+  if (temp < 36.5) return "Low";
+  if (temp > 37.5) return "Fever";
+  return "Normal";
+}
+function getOxygenStatus(spo2) {
+  if (spo2 == null) return '--';
+  if (spo2 < 95) return "Low";
+  return "Normal";
+}
+
 logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
