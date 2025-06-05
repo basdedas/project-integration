@@ -625,7 +625,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function updateStats(patient) {
   try {
-    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patient.id}`, {
+    // Use the correct field name - might be user_id instead of id
+    const patientId = patient.id || patient.user_id || patient.userId;
+    
+    // ADD DEBUGGING
+    console.log('Patient object in updateStats:', patient);
+    console.log('Using patient ID:', patientId);
+    
+    if (!patientId) {
+      console.error('No patient ID found in patient object');
+      setDefaultValues();
+      return;
+    }
+    
+    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patientId}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
