@@ -253,11 +253,12 @@
       </div>
       <div class="main-content">
         <div class="main-section">
-          <div class="card" id="card-heart" style="background:#ffe5ec;">
+          <a href="HeartRate_GraphPage.html" class="card" id="card-heart" style="background:#ffe5ec;">
             <h3>Heart Rate</h3>
             <div class="value" id="heart-rate">--</div>
             <div class="status" id="heart-status">--</div>
-          </div>
+          </a>
+
           <div class="card" id="card-steps" style="background:#e0f7fa;">
             <h3>Steps</h3>
             <div class="value" id="steps">--</div>
@@ -422,81 +423,7 @@ function remove_medication(medicationId) {
   });
 }
 
-async function updateStats(patient) {
-  try {
-    localStorage.removeItem('selectedPatient'); // Clear previous selection
-    localStorage.setItem('selectedPatient', JSON.stringify(patient));
-    
-    const patientItems = document.querySelectorAll('.patient-item');
-    patientItems.forEach(item => item.classList.remove('active'));
 
-    let userEmail = patient.email; // Assuming username is the email
-    console.log("Updating stats for:", userEmail);
-
-    const activePatient = document.querySelector('.patient-item.active');
-    patientItems.forEach(item => {
-      if (item.textContent === patient.username) {
-        item.classList.add('active');
-      }
-    });
-
-    updateMedication();
-
-    // Update the dashboard with fetched data
-    const heartRateData = await loadData('heart_rate', 'avg_day', userEmail); // Await and store in a variable
-    console.log('Fetched Heart Rate Data:', heartRateData); // Debug the raw data
-    const heartRateValue = heartRateData 
-      ? heartRateData.health_type.toFixed(1)
-      : '--';
-    document.getElementById("heart-rate").textContent = heartRateValue;
-    console.log("Heart rate displayed:", heartRateValue); // Debug the value being set
-    document.getElementById("heart-status").textContent = heartRateData
-      ? heartRateData.health_type > 100 || heartRateData.health_type < 60 ? 'High ⁉️' : 'Normal ✅'
-      : '--';
-    const stepsData = await loadData('steps', 'avg_day', userEmail);
-    console.log('Fetched Steps Data:', stepsData); // Debug the raw data
-    document.getElementById("steps").textContent = stepsData
-      ? stepsData.health_type.toFixed(1)
-      : '--';
-    console.log("Steps displayed:", document.getElementById("steps").textContent); // Debug the value being set
-    document.getElementById("steps-status").textContent = stepsData
-      ? stepsData.health_type < 1000 ? 'Low ⚠️' : 'Good 👍'
-      : '--';
-
-    const temperatureData = await loadData('temperature', 'avg_day', userEmail);
-    console.log('Fetched Temperature Data:', temperatureData); // Debug the raw data
-    document.getElementById("temperature").textContent = temperatureData
-      ? temperatureData.health_type.toFixed(1)
-      : '--';
-    console.log("Temperature displayed:", document.getElementById("temperature").textContent); // Debug the value being set
-    document.getElementById("temp-status").textContent = temperatureData
-      ? temperatureData.health_type < 36.5 || temperatureData.health_type > 37.5 ? 'Abnormal ⚠️' : 'Normal ✅'
-      : '--';
-
-    const oxygenData = await loadData('spO2', 'avg_day', userEmail);
-    console.log('Fetched Blood Oxygen Data:', oxygenData); // Debug the raw data
-    document.getElementById("oxygen").textContent = oxygenData
-      ? oxygenData.health_type.toFixed(1)
-      : '--';
-    console.log("Blood oxygen displayed:", document.getElementById("oxygen").textContent); // Debug the value being set
-    document.getElementById("oxygen-status").textContent = oxygenData
-      ? oxygenData.health_type < 95 ? 'Low ⚠️' : 'Normal ✅'
-      : '--';
-
-    // Enable click and change cursor
-    document.getElementById("card-heart").onclick = () => location.href = 'HeartRate_GraphPage.html';
-    document.getElementById("card-steps").onclick = () => location.href = 'StepCount_GraphPage.html';
-    document.getElementById("card-temp").onclick = () => location.href = 'Temperature_Graph.html';
-    document.getElementById("card-oxygen").onclick = () => location.href = 'BloodOxygen_Graph.html';
-
-    document.getElementById("card-heart").style.cursor = "pointer";
-    document.getElementById("card-steps").style.cursor = "pointer";
-    document.getElementById("card-temp").style.cursor = "pointer";
-    document.getElementById("card-oxygen").style.cursor = "pointer";
-  } catch (error) {
-    console.error("Error fetching patient data:", error);
-  }
-}
 
 
     async function loadData(healthType, dataType, userEmail) {
