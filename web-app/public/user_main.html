@@ -328,11 +328,9 @@
 
     window.onload = fetchUsername;
 
+    renderMedicationsInBubble();
 
-    function renderMedicationsInBubble() {
-      const medList = document.getElementById('medList');
-      const meds = JSON.parse(localStorage.getItem('medications')) || [];
-
+    async function fetchMeds(){
       const response = fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds', {
         method: 'GET',
         headers: {
@@ -345,9 +343,13 @@
       } else {
         console.error("Meds fetch failed");
       }
+    }
 
-      if (meds.length === 0) {
-        medList.innerHTML = '<p>No medications added.</p>';
+    async function renderMedicationsInBubble() {
+
+      const meds = await fetchMeds();
+      if (!meds || meds.length === 0) {
+        document.getElementById('medList').innerHTML = '<p>No medications found.</p>';
         return;
       }
 
@@ -386,9 +388,6 @@
 
       return `${hours}h ${minutes}m`;
     }
-
-    renderMedicationsInBubble();
-
 
     // Refresh every minute
     setInterval(renderMedicationsInBubble, 60000);
