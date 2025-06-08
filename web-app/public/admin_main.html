@@ -333,6 +333,14 @@
 
   <script>    
   updateAppointments();  
+  if (localStorage.getItem("selectedPatient")) {
+    const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
+    updateStats(selectedPatient);
+    updateMedication();
+  } else {
+    setDefaultValues();
+  }
+
 function bookAppointment() {
   try {
     const patient = localStorage.getItem("selectedPatient");
