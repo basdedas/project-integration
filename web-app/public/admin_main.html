@@ -399,7 +399,11 @@ function addMedication() {
   const notes = document.getElementById("med-notes").value;
 
   if (medName && dosage && beginDate && endDate) {
-    if (medicationList.children.includes(medName)) {
+    const medicationList = document.getElementById("medication-list");
+    const existingMed = Array.from(medicationList.children).find(entry => 
+      entry.getAttribute("data-med-id") === medName
+    );
+    if (existingMed) {
       alert("Medication already exists.");
       return;
     }
@@ -471,6 +475,7 @@ function updateMedication() {
       data.forEach(med => {
         const entry = document.createElement("div");
         entry.className = "medication-entry";
+        entry.attribute("data-med-id", med.med_name);
         entry.innerHTML = `
           <span>${med.med_name} – Dosage: ${med.dosage} - Between ${med.begin_date} and ${med.end_date}. \n Notes: ${med.notes}</span>
           <button onclick="remove_medication('${med.med_name}')">Remove</button>
