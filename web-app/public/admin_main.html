@@ -753,6 +753,19 @@ logout = () => {
   window.location.href = '../index.html';
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+  const healthCards = document.querySelectorAll('.card');
+  healthCards.forEach(card => {
+    card.addEventListener('click', () => {
+      if (!selectedPatient) {
+        event.preventDefault();
+        alert("Please select a patient first!");
+        return;
+      }
+    });
+  });
+});
+
 </script>
 </body>
 </html>
