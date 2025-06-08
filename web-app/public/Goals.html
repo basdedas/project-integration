@@ -51,9 +51,6 @@
     <label for="steps">Steps Goal</label>
     <input type="number" id="steps" placeholder="e.g. 1000">
     
-    <label for="water">Water Cups Goal</label>
-    <input type="number" id="water" placeholder="e.g. 8">
-    
     <label for="calories">Calories Burn Goal</label>
     <input type="number" id="calories" placeholder="e.g. 500">
 
@@ -61,28 +58,70 @@
   </div>
 
   <script>
-    function loadCurrentGoals() {
-      const goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
-      document.getElementById("steps").value = goals.steps;
-      document.getElementById("water").value = goals.water;
-      document.getElementById("calories").value = goals.calories;
+    async function loadCurrentGoals() {
+      const fetchedGoals = await loadData('metrics');
+
+      document.getElementById("steps").value = fetchedGoals.steps;
+      document.getElementById("calories").value = fetchedGoals.calories;
     }
 
     function saveGoals() {
-  const steps = parseInt(document.getElementById("steps").value);
-  const water = parseInt(document.getElementById("water").value);
-  const calories = parseInt(document.getElementById("calories").value);
+      try {
+        const steps = parseInt(document.getElementById("steps").value);
+        const calories = parseInt(document.getElementById("calories").value);
 
-  const goals = { steps, water, calories };
-  localStorage.setItem("goals", JSON.stringify(goals));
+        const goals = { steps, calories };
+        addMetrics(steps, calories);
 
-  // Optionally reset progress to 0 so bars reset
-  const progress = { steps: 0, water: 0, calories: 0 };
-  localStorage.setItem("progress", JSON.stringify(progress));
-
-  alert("Goals saved!");
-  window.location.href = "user_main.html"; 
+        alert("Goals saved!");
+        window.location.href = "user_main.html"; 
+      } catch (error) {
+        console.error("Error saving goals:", error);
+        alert("Please enter valid numbers for your goals!");
+      }
 }
+
+    async function addMetrics(steps, calories) {
+      try {
+        const URL = 'https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/metrics/add';
+        const response = await fetch(URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ steps, calories })
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log("Metrics added successfully:", data);
+      } catch (error) {
+        console.error("Error adding metrics:", error);
+      }
+    }
+
+    async function loadData(healthType, dataType) {
+      try {
+        let URL = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/${healthType}?type=${dataType}`;
+        const response = await fetch(URL, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log("Heart rate data fetched successfully:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching heart rate data:", error);
+      }
+    }
 
 
     loadCurrentGoals();
