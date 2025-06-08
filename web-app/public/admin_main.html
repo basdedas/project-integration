@@ -399,6 +399,10 @@ function addMedication() {
   const notes = document.getElementById("med-notes").value;
 
   if (medName && dosage && beginDate && endDate) {
+    if (medicationList.children.includes(medName)) {
+      alert("Medication already exists.");
+      return;
+    }
     fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds/add`, {
       method: 'POST',
       headers: {
