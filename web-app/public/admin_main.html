@@ -659,15 +659,19 @@ async function updateStats(patient) {
     const userEmail = patient.email;
     const latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail).health_type;
     const heartRateStatus = getHeartStatus(latestHeartRate);
+    console.log("Latest heart rate:", latestHeartRate, "Status:", heartRateStatus);
 
     const latestSteps = await loadData('steps', 'avg_day', userEmail).health_type;
     const stepsStatus = getStepsStatus(latestSteps);
+    console.log("Latest steps:", latestSteps, "Status:", stepsStatus);
 
     const latestTemperature = await loadData('temperature', 'avg_day', userEmail).health_type;
     const tempStatus = getTempStatus(latestTemperature);
+    console.log("Latest temperature:", latestTemperature, "Status:", tempStatus);
 
     const latestOxygen = await loadData('spO2', 'avg_day', userEmail).health_type;
     const oxygenStatus = getOxygenStatus(latestSteps);
+    console.log("Latest oxygen level:", latestOxygen, "Status:", oxygenStatus);
 
 
 
