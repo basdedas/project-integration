@@ -247,6 +247,7 @@
       </div>
     <div class="layout">
        <div class="patients-list"> <h2>My Patients</h2>
+        <h3 id="selectedPatient">Currently selected: </h3> 
           <div id="patient-items-container">
           </div>
   
@@ -254,17 +255,13 @@
     <!-- ... existing circle bars ... -->
 
 
-        <div class="circle-bar" style="--value:40;--color:#3f51b5">
-          <span>400</span>
-          <div class="circle-label">/ 1000 steps</div>
+        <div class="circle-bar steps-bar" id="stepsCircle" style="--value:40;--color:#3f51b5">
+          <span id="stepsValue">0</span>
+          <div class="circle-label" id="stepsGoalText">/ 1000 steps</div>
         </div>
-        <div class="circle-bar" style="--value:50;--color:#03a9f4">
-          <span>4</span>
-          <div class="circle-label">/ 8 cups</div>
-        </div>
-        <div class="circle-bar" style="--value:60;--color:#ffc107">
-          <span>300</span>
-          <div class="circle-label">/ 500 kcal</div>
+        <div class="circle-bar calories-bar" id="caloriesCircle" style="--value:60;--color:#ffc107">
+          <span id="caloriesValue">300</span>
+          <div class="circle-label" id="caloriesGoalText">/ 500 kcal</div>
         </div>
       </div>
       <div class="main-content">
@@ -635,6 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function updateStats(patient) {
   try {
+    getElementById('selectedPatient').textContent = `Currently selected:\n ${patient.username}`;
+
     //Set the active patient 
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
     updateMedication();
@@ -714,6 +713,25 @@ function getOxygenStatus(spo2) {
   if (spo2 < 95) return "Low";
   return "Normal";
 }
+
+async function loadGoalsAndProgress() {
+  const fetchedGoals = await loadData('metrics', '', localStorage.getItem('selectedPatient').email);
+  let steps = await loadData('steps', 'avg_day', localStorage.getItem('selectedPatient').email);
+  steps = steps.health_type;
+  let calories = await loadData('calories', 'avg_day', localStorage.getItem('selectedPatient').email);
+  calories = calories.health_type;
+
+  // Update Steps
+  document.getElementById("stepsValue").textContent = steps;
+  document.getElementById("stepsGoalText").textContent = `/ ${fetchedGoals.steps} steps`;
+  document.querySelector(".steps-bar").style.setProperty("--value", (steps / fetchedGoals.steps) * 100);
+
+  // Update Calories
+  document.getElementById("caloriesValue").textContent = calories;
+  document.getElementById("caloriesGoalText").textContent = `/ ${fetchedGoals.calories} kcal`;
+  document.querySelector(".calories-bar").style.setProperty("--value", (calories / fetchedGoals.calories) * 100);
+    }
+
 
 logout = () => {
   localStorage.removeItem('token');
