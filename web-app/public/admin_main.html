@@ -624,11 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-    if (!Array.isArray(data) || data.length === 0) {
-      setDefaultValues();
-      return;
-    }async function updateStats(patient) {
-
+async function updateStats(patient) {
   try {
     // Use the correct field name - might be user_id instead of id
     const patientId = patient.id || patient.user_id || patient.userId;
