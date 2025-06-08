@@ -458,6 +458,7 @@ async function remove_appointment(appointmentId) {
 }
 
 function updateMedication() {
+  console.log("Updating medication list...");
   const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
   getMedicationData(selectedPatient.user_id)
     .then(data => {
@@ -471,6 +472,7 @@ function updateMedication() {
           <button onclick="remove_medication('${med.med_name}')">Remove</button>
         `;
         medicationList.appendChild(entry);
+        console.log("Medication entry created:", med.med_name);
       });
     })
     .catch(error => {
@@ -537,6 +539,7 @@ function remove_medication(medicationId) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        updateAppointments();
         console.log("Appointment made successfully:", data);
       } catch (error) {
         console.error("Error making appointment:", error);
