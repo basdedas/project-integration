@@ -339,9 +339,12 @@
         }
       });
       if (response.ok) {
+        const data = await response.json();
         console.log("Meds fetched successfully");
+        return data;
       } else {
         console.error("Meds fetch failed");
+        return null;
       }
     }
 
