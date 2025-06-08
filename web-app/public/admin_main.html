@@ -688,13 +688,12 @@ async function updateStats(patient) {
     document.getElementById('oxygen').textContent = latestOxygen ?? 'N/A';
     document.getElementById('oxygen-status').textContent = oxygenStatus;
 
+    //Set the active patient 
+    localStorage.setItem('selectedPatient', JSON.stringify(patient));
   } catch (error) {
     console.error("Error updating stats:", error);
   }
 }
-
-localStorage.setItem('selectedPatient', JSON.stringify(patient));
-
 
 function setDefaultValues() {
   console.warn("Setting default values due to error or no data");
