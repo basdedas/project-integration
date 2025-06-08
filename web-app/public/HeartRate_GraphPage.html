@@ -235,8 +235,8 @@
     try {
       let patient;
       updateActiveTab(period);
-      const allData = await fetchHealthData();
-      const { labels, values } = groupBy(allData, period);
+      // const allData = await fetchHealthData();
+      // const { labels, values } = groupBy(allData, period);
       let data;
       if(localStorage.getItem('selectedPatient') !== null) {
         patient = JSON.parse(localStorage.getItem('selectedPatient'));
