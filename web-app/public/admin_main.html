@@ -334,8 +334,10 @@
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
     updateMedication();
+    getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
   } else {
     setDefaultValues();
+    getElementById('selectedPatient').textContent = `Currently no patient selected`;
   }
 
 function bookAppointment() {
