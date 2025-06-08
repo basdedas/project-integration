@@ -334,6 +334,7 @@
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
     updateMedication();
+    loadGoalsAndProgress();
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
   } else {
     setDefaultValues();
@@ -639,7 +640,8 @@ async function updateStats(patient) {
     //Set the active patient 
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
     updateMedication();
-
+    loadGoalsAndProgress();
+    
     const userEmail = patient.email;
     let latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail);
     latestHeartRate = latestHeartRate.health_type;
