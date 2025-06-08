@@ -641,7 +641,7 @@ async function updateStats(patient) {
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
     updateMedication();
     loadGoalsAndProgress();
-    
+
     const userEmail = patient.email;
     let latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail);
     latestHeartRate = latestHeartRate.health_type;
@@ -719,10 +719,12 @@ function getOxygenStatus(spo2) {
 }
 
 async function loadGoalsAndProgress() {
-  const fetchedGoals = await loadData('metrics', '', localStorage.getItem('selectedPatient').email);
-  let steps = await loadData('steps', 'avg_day', localStorage.getItem('selectedPatient').email);
+  const patient = JSON.parse(localStorage.getItem('selectedPatient'));
+
+  const fetchedGoals = await loadData('metrics', '', patient.email);
+  let steps = await loadData('steps', 'avg_day', patient.email);
   steps = steps.health_type;
-  let calories = await loadData('calories', 'avg_day', localStorage.getItem('selectedPatient').email);
+  let calories = await loadData('calories', 'avg_day', patient.email);
   calories = calories.health_type;
 
   // Update Steps
