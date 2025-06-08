@@ -210,9 +210,9 @@
     }
   }
 
-      async function loadData(healthType, dataType) {
+      async function loadData(healthType, dataType, userEmail) {
       try {
-        let URL = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/${healthType}?type=${dataType}`;
+        let URL = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/${healthType}?type=${dataType}&targetUserEmail=${userEmail}`;
         const response = await fetch(URL, {
           method: 'GET',
           headers: {
