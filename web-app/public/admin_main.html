@@ -238,6 +238,33 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+.appointment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appointment-form input,
+.appointment-form button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+}
+
+.appointment-form button {
+  background-color: #64b5f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.appointment-form button:hover {
+  background-color: #42a5f5;
+}
+
   </style>
 </head>
 <body>
@@ -299,12 +326,14 @@
         <div class="appointment-row">
           <div class="calendar-card">
             <h2>Book Appointment</h2>
-            <input type="date" id="appointment-date"><br>
-            <input type="time" id="appointment-time"><br>
-            <input type="text" id="appointment-reason" placeholder="Reason for appointment"><br>
-            <input type="text" id="appointment-notes" placeholder="Additional notes"><br>
+            <div class="appointment-form">
+            <input type="date" id="appointment-date">
+            <input type="time" id="appointment-time">
+            <input type="text" id="appointment-reason" placeholder="Reason for appointment">
+            <input type="text" id="appointment-notes" placeholder="Additional notes">
             <button onclick="bookAppointment()">Confirm Appointment</button>
-            <div id="confirmation" class="confirmation"></div>
+          </div>
+          <div id="confirmation" class="confirmation"></div>
           </div>
           <div class="appointment-log">
             <h3>Booked Appointments</h3>
