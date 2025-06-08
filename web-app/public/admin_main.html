@@ -125,7 +125,6 @@
     .footer-card input {
       display: flex;
       gap: 10px;
-      margin_bottom: 10px;
       align-items: center;
       padding: 10px;
       font-size: 16px;
@@ -227,7 +226,6 @@
     #med-times {
       display: flex;
       gap: 10px;
-      margin_bottom: 10px;
       align-items: center;
     }
     #med-times input[type="time"] {
@@ -496,9 +494,6 @@ function remove_medication(medicationId) {
   });
 }
 
-
-
-
     async function loadData(healthType, dataType, userEmail) {
       try {
         let URL = `https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/health/${healthType}?type=${dataType}&targetUserEmail=${userEmail}`;
@@ -661,18 +656,33 @@ async function updateStats(patient) {
     // Find the latest entry by timestamp
     const latest = data.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
 
+    const userEmail = patient.email;
+    const latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail).health_type;
+    const heartRateStatus = getHeartStatus(latestHeartRate);
+
+    const latestSteps = await loadData('steps', 'avg_day', userEmail).health_type;
+    const stepsStatus = getStepsStatus(latestSteps);
+
+    const latestTemperature = await loadData('temperature', 'avg_day', userEmail).health_type;
+    const tempStatus = getTempStatus(latestTemperature);
+
+    const latestOxygen = await loadData('spo2', 'avg_day', userEmail).health_type;
+    const oxygenStatus = getOxygenStatus(latestSteps);
+
+
+
     // Fill the cards with the latest values
-    document.getElementById('heart-rate').textContent = latest.heart_rate ?? '--';
-    document.getElementById('heart-status').textContent = getHeartStatus(latest.heart_rate);
+    document.getElementById('heart-rate').textContent = latestHeartRate ?? 'N/A';
+    document.getElementById('heart-status').textContent = heartRateStatus;
 
-    document.getElementById('steps').textContent = latest.steps ?? '--';
-    document.getElementById('steps-status').textContent = getStepsStatus(latest.steps);
+    document.getElementById('steps').textContent = latestSteps ?? 'N/A';
+    document.getElementById('steps-status').textContent = stepsStatus;
 
-    document.getElementById('temperature').textContent = latest.temperature ?? '--';
-    document.getElementById('temp-status').textContent = getTempStatus(latest.temperature);
+    document.getElementById('temperature').textContent = latestTemperature ?? 'N/A';
+    document.getElementById('temp-status').textContent = tempStatus;
 
-    document.getElementById('oxygen').textContent = latest.spo2 ?? '--';
-    document.getElementById('oxygen-status').textContent = getOxygenStatus(latest.spo2);
+    document.getElementById('oxygen').textContent = latestOxygen ?? 'N/A';
+    document.getElementById('oxygen-status').textContent = oxygenStatus;
 
   } catch (error) {
     setDefaultValues();
