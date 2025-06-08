@@ -331,7 +331,7 @@
     renderMedicationsInBubble();
 
     async function fetchMeds(){
-      const response = fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds', {
+      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/meds', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -349,7 +349,6 @@
     }
 
     async function renderMedicationsInBubble() {
-
       const meds = await fetchMeds();
       if (!meds || meds.length === 0) {
         document.getElementById('medList').innerHTML = '<p>No medications found.</p>';
