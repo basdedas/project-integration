@@ -255,13 +255,13 @@
     <!-- ... existing circle bars ... -->
 
 
-        <div class="circle-bar steps-bar" id="stepsCircle" style="--value:40;--color:#3f51b5">
+        <div class="circle-bar steps-bar" id="stepsCircle" style="--value:0;--color:#3f51b5">
           <span id="stepsValue">0</span>
-          <div class="circle-label" id="stepsGoalText">/ 1000 steps</div>
+          <div class="circle-label" id="stepsGoalText">/ 0 steps</div>
         </div>
-        <div class="circle-bar calories-bar" id="caloriesCircle" style="--value:60;--color:#ffc107">
-          <span id="caloriesValue">300</span>
-          <div class="circle-label" id="caloriesGoalText">/ 500 kcal</div>
+        <div class="circle-bar calories-bar" id="caloriesCircle" style="--value:0;--color:#ffc107">
+          <span id="caloriesValue">0</span>
+          <div class="circle-label" id="caloriesGoalText">/ 0 kcal</div>
         </div>
       </div>
       <div class="main-content">
@@ -751,6 +751,8 @@ async function loadGoalsAndProgress() {
     console.error("Error loading goals and progress:", error);
     document.getElementById("stepsValue").textContent = "N/A";
     document.getElementById("caloriesValue").textContent = "N/A";
+    document.getElementById("stepsGoalText").textContent = "N/A";
+    document.getElementById("caloriesGoalText").textContent = "N/A";
   }
 }
 
