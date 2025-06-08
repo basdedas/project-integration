@@ -627,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function updateStats(patient) {
   try {
     // Use the correct field name - might be user_id instead of id
-    const patientId = patient.id || patient.user_id || patient.userId;
+    const patientId = patient.user_id;
     
     // ADD DEBUGGING
     console.log('Patient object in updateStats:', patient);
@@ -689,7 +689,7 @@ async function updateStats(patient) {
     document.getElementById('oxygen-status').textContent = oxygenStatus;
 
   } catch (error) {
-    setDefaultValues();
+    console.error("Error updating stats:", error);
   }
 }
 
@@ -697,6 +697,7 @@ localStorage.setItem('selectedPatient', JSON.stringify(patient));
 
 
 function setDefaultValues() {
+  console.warn("Setting default values due to error or no data");
   document.getElementById('heart-rate').textContent = '--';
   document.getElementById('heart-status').textContent = '--';
   document.getElementById('steps').textContent = '--';
