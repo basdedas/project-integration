@@ -719,24 +719,31 @@ function getOxygenStatus(spo2) {
 }
 
 async function loadGoalsAndProgress() {
-  const patient = JSON.parse(localStorage.getItem('selectedPatient'));
+  try{
+    const patient = JSON.parse(localStorage.getItem('selectedPatient'));
 
-  const fetchedGoals = await loadData('metrics', '', patient.email);
-  let steps = await loadData('steps', 'avg_day', patient.email);
-  steps = steps.health_type;
-  let calories = await loadData('calories', 'avg_day', patient.email);
-  calories = calories.health_type;
+    const fetchedGoals = await loadData('metrics', '', patient.email);
+    let steps = await loadData('steps', 'avg_day', patient.email);
+    steps = steps.health_type;
+    let calories = await loadData('calories', 'avg_day', patient.email);
+    calories = calories.health_type;
 
-  // Update Steps
-  document.getElementById("stepsValue").textContent = steps;
-  document.getElementById("stepsGoalText").textContent = `/ ${fetchedGoals.steps} steps`;
-  document.querySelector(".steps-bar").style.setProperty("--value", (steps / fetchedGoals.steps) * 100);
+    // Update Steps
+    document.getElementById("stepsValue").textContent = steps;
+    document.getElementById("stepsGoalText").textContent = `/ ${fetchedGoals.steps} steps`;
+    document.querySelector(".steps-bar").style.setProperty("--value", (steps / fetchedGoals.steps) * 100);
 
-  // Update Calories
-  document.getElementById("caloriesValue").textContent = calories;
-  document.getElementById("caloriesGoalText").textContent = `/ ${fetchedGoals.calories} kcal`;
-  document.querySelector(".calories-bar").style.setProperty("--value", (calories / fetchedGoals.calories) * 100);
-    }
+    // Update Calories
+    document.getElementById("caloriesValue").textContent = calories;
+    document.getElementById("caloriesGoalText").textContent = `/ ${fetchedGoals.calories} kcal`;
+    document.querySelector(".calories-bar").style.setProperty("--value", (calories / fetchedGoals.calories) * 100);
+  }
+  catch (error) {
+    console.error("Error loading goals and progress:", error);
+    document.getElementById("stepsValue").textContent = "N/A";
+    document.getElementById("caloriesValue").textContent = "N/A";
+  }
+}
 
 
 logout = () => {
