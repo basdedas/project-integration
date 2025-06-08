@@ -266,26 +266,26 @@
       </div>
       <div class="main-content">
         <div class="main-section">
-          <a href="heartratepatient" class="card" id="card-heart" style="background:#ffe5ec;">
+          <a href="HeartRate_GraphPage.html" class="card" id="card-heart" style="background:#ffe5ec;">
             <h3>Heart Rate</h3>
             <div class="value" id="heart-rate">--</div>
             <div class="status" id="heart-status">--</div>
           </a>
 
-          <a href="steppatient.html" class="card" id="card-steps" style="background:#e0f7fa;">
+          <a href="StepCount_GraphPage.html" class="card" id="card-steps" style="background:#e0f7fa;">
             <h3>Steps</h3>
             <div class="value" id="steps">--</div>
             <div class="status" id="steps-status">--</div>
           </a>
 
 
-          <a href="temppatients.html" class="card" id="card-temp" style="background:#fff3e0;">
+          <a href="Temperature_Graph.html" class="card" id="card-temp" style="background:#fff3e0;">
             <h3>Temperature</h3>
             <div class="value" id="temperature">--</div>
             <div class="status" id="temp-status">--</div>
           </a>
 
-          <a href="oxygenpatients.html" class="card" id="card-oxygen" style="background:#e8f5e9;">
+          <a href="BloodOxygen_Graph.html" class="card" id="card-oxygen" style="background:#e8f5e9;">
             <h3>Blood Oxygen</h3>
             <div class="value" id="oxygen">--</div>
             <div class="status" id="oxygen-status">--</div>
@@ -759,6 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => {
       if (!selectedPatient) {
         event.preventDefault();
+        window.location.href = 'admin_main.html';
         alert("Please select a patient first!");
         return;
       }
