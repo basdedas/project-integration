@@ -623,7 +623,11 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAndDisplayPatients();
 });
 
-async function updateStats(patient) {
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setDefaultValues();
+      return;
+    }async function updateStats(patient) {
 
   try {
     // Use the correct field name - might be user_id instead of id
@@ -648,28 +652,28 @@ async function updateStats(patient) {
     if (!response.ok) throw new Error('Failed to fetch health data');
     const data = await response.json(); // data is an array
 
-    if (!Array.isArray(data) || data.length === 0) {
-      setDefaultValues();
-      return;
-    }
 
     // Find the latest entry by timestamp
     const latest = data.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
 
     const userEmail = patient.email;
-    const latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail).health_type;
+    let latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail);
+    latestHeartRate = latestHeartRate.health_type;
     const heartRateStatus = getHeartStatus(latestHeartRate);
     console.log("Latest heart rate:", latestHeartRate, "Status:", heartRateStatus);
 
-    const latestSteps = await loadData('steps', 'avg_day', userEmail).health_type;
+    let latestSteps = await loadData('steps', 'avg_day', userEmail);
+    latestStepts = latestSteps.health_type;
     const stepsStatus = getStepsStatus(latestSteps);
     console.log("Latest steps:", latestSteps, "Status:", stepsStatus);
 
-    const latestTemperature = await loadData('temperature', 'avg_day', userEmail).health_type;
+    const latestTemperature = await loadData('temperature', 'avg_day', userEmail);
+    latestTemperature = latestTemperature.health_type;
     const tempStatus = getTempStatus(latestTemperature);
     console.log("Latest temperature:", latestTemperature, "Status:", tempStatus);
 
-    const latestOxygen = await loadData('spO2', 'avg_day', userEmail).health_type;
+    const latestOxygen = await loadData('spO2', 'avg_day', userEmail);
+    latestOxygen = latestOxygen.health_type;
     const oxygenStatus = getOxygenStatus(latestSteps);
     console.log("Latest oxygen level:", latestOxygen, "Status:", oxygenStatus);
 
