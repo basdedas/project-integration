@@ -115,7 +115,6 @@ let temperatureChart = new Chart(ctx, {
   async function loadData(period) {
     try {
       let patient;
-      updateActiveTab(period);
       let data;
       if(localStorage.getItem('selectedPatient') !== null) {
         patient = JSON.parse(localStorage.getItem('selectedPatient'));
