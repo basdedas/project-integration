@@ -449,7 +449,7 @@ async function fetchUserAppointments() {
       const next = userAppointments[0];
       upcomingDiv.textContent = `${next.appointment_date} – ${next.reason}`;
       upcomingDiv.onclick = () => {
-        const appointmentDetails = `Appointment Details:\n\nName: ${next.reason}\nDate: ${next.appointment_date}\nTime: ${next.appointment_time}\nReason: ${next.reason}\n Notes: ${next.notes}`;
+        const appointmentDetails = `Appointment Details:\nReason: ${next.reason}\nDate: ${next.appointment_date}\nTime: ${next.appointment_time}\n Notes: ${next.notes}`;
         alert(appointmentDetails);
       };
     }
