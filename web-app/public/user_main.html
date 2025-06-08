@@ -276,7 +276,7 @@
             <div class="circle-label" id="stepsGoalText"></div>
           </div>
         </a>
-        
+
         <!-- Calories Circle -->
         <a href="Goals.html" style="text-decoration: none;">
           <div class="circle-bar calories-bar" id="caloriesCircle">
@@ -396,29 +396,10 @@
 
     renderDateInNL();
 
-    async function fetchGoals() {
-      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/metrics', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Goals fetched successfully:", data);
-        return data;
-      } else {
-        console.error("Failed to fetch goals");
-        return null;
-      }
-    }
-
     async function loadGoalsAndProgress() {
-      const fetchedGoals = await fetchGoals();
-
-      let steps = fetchData('steps', 'avg_day');
-      let calories = fetchData('calories', 'avg_day');
+      const fetchedGoals = await loadData('metrics');
+      const steps = await loadData('steps', 'avg_day');
+      const calories = await loadData('calories', 'avg_day');
 
       // Update Steps
       document.getElementById("stepsValue").textContent = steps;
