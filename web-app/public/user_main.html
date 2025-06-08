@@ -409,7 +409,7 @@
       document.querySelector(".steps-bar").style.setProperty("--value", (steps / fetchedGoals.steps) * 100);
 
       // Update Calories
-      document.getElementById("caloriesValue").textContent = progress.calories;
+      document.getElementById("caloriesValue").textContent = calories;
       document.getElementById("caloriesGoalText").textContent = `/ ${fetchedGoals.calories} kcal`;
       document.querySelector(".calories-bar").style.setProperty("--value", (calories / fetchedGoals.calories) * 100);
     }
