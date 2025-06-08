@@ -262,7 +262,7 @@
       }];
       heartChart.update();
 
-      updateSummary(values);
+      updateSummary(data.data);
     } catch (error) {
       console.error('Error loading chart data:', error);
       document.getElementById("status-msg").innerText = "Failed to load data.";
