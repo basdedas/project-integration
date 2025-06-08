@@ -334,10 +334,10 @@
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
     updateMedication();
-    getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
+    document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
   } else {
     setDefaultValues();
-    getElementById('selectedPatient').textContent = `Currently no patient selected`;
+    document.getElementById('selectedPatient').textContent = `Currently no patient selected`;
   }
 
 function bookAppointment() {
@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function updateStats(patient) {
   try {
-    getElementById('selectedPatient').textContent = `Currently selected:\n ${patient.username}`;
+    document.getElementById('selectedPatient').textContent = `Currently selected:\n ${patient.username}`;
 
     //Set the active patient 
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
