@@ -398,8 +398,10 @@
 
     async function loadGoalsAndProgress() {
       const fetchedGoals = await loadData('metrics');
-      const steps = await loadData('steps', 'avg_day');
-      const calories = await loadData('calories', 'avg_day');
+      let steps = await loadData('steps', 'avg_day');
+      steps = steps.health_type;
+      let calories = await loadData('calories', 'avg_day');
+      calories = calories.health_type;
 
       // Update Steps
       document.getElementById("stepsValue").textContent = steps;
