@@ -659,7 +659,7 @@ async function updateStats(patient) {
     console.log("Latest heart rate:", latestHeartRate, "Status:", heartRateStatus);
 
     let latestSteps = await loadData('steps', 'avg_day', userEmail);
-    latestStepts = latestSteps.health_type;
+    latestSteps = latestSteps.health_type;
     const stepsStatus = getStepsStatus(latestSteps);
     console.log("Latest steps:", latestSteps, "Status:", stepsStatus);
 
