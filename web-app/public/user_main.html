@@ -276,21 +276,7 @@
             <div class="circle-label" id="stepsGoalText"></div>
           </div>
         </a>
-
-        <!-- Water Circle with Buttons -->
-        <a href="Goals.html" style="text-decoration: none;">
-          <div style="display: flex; flex-direction: column; align-items: center;">
-            <div class="circle-bar water-bar" id="waterCircle">
-              <span id="waterValue">0</span>
-              <div class="circle-label" id="waterGoalText"></div>
-            </div>
-          </div>
-        </a>
-        <div class="water-buttons">
-          <button onclick="updateWater(1)">+</button>
-          <button onclick="updateWater(-1)">–</button>
-        </div>
-
+        
         <!-- Calories Circle -->
         <a href="Goals.html" style="text-decoration: none;">
           <div class="circle-bar calories-bar" id="caloriesCircle">
@@ -357,13 +343,13 @@
 
       medList.innerHTML = '';
       meds.forEach(med => {
-        let timeLeft = 'No end date set';
+        let timeLeft = 'no end date set';
         if (!med.end_date == null || !med.end_date === '' || !med.end_date == undefined) {
           timeLeft = getTimeUntil(med.end_date);
         }
         const p = document.createElement('p');
         p.style.margin = "5px 0";
-        p.textContent = `${med.med_name} – until ${timeLeft}`;
+        p.textContent = `${med.med_name} – Until ${timeLeft}`;
         medList.appendChild(p);
         p.addEventListener('click', () => {
           const medDetails = `Medication: ${med.med_name}\nDosage: ${med.dosage}\nBegin date: ${med.start_date}\nEnd Date: ${med.end_date || 'Not set'}\n Notes: ${med.notes || 'No notes'}`;
@@ -410,36 +396,40 @@
 
     renderDateInNL();
 
-    function loadGoalsAndProgress() {
-      const goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
-      const progress = JSON.parse(localStorage.getItem("progress")) || { steps: 0, water: 0, calories: 0 };
+    async function fetchGoals() {
+      const response = await fetch('https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/metrics', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Goals fetched successfully:", data);
+        return data;
+      } else {
+        console.error("Failed to fetch goals");
+        return null;
+      }
+    }
+
+    async function loadGoalsAndProgress() {
+      const fetchedGoals = await fetchGoals();
+
+      let steps = fetchData('steps', 'avg_day');
+      let calories = fetchData('calories', 'avg_day');
 
       // Update Steps
-      document.getElementById("stepsValue").textContent = progress.steps;
-      document.getElementById("stepsGoalText").textContent = `/ ${goals.steps} steps`;
-      document.querySelector(".steps-bar").style.setProperty("--value", (progress.steps / goals.steps) * 100);
-
-      // Update Water
-      document.getElementById("waterValue").textContent = progress.water;
-      document.getElementById("waterGoalText").textContent = `/ ${goals.water} cups`;
-      document.querySelector(".water-bar").style.setProperty("--value", (progress.water / goals.water) * 100);
+      document.getElementById("stepsValue").textContent = steps;
+      document.getElementById("stepsGoalText").textContent = `/ ${fetchedGoals.steps} steps`;
+      document.querySelector(".steps-bar").style.setProperty("--value", (steps / fetchedGoals.steps) * 100);
 
       // Update Calories
       document.getElementById("caloriesValue").textContent = progress.calories;
-      document.getElementById("caloriesGoalText").textContent = `/ ${goals.calories} kcal`;
-      document.querySelector(".calories-bar").style.setProperty("--value", (progress.calories / goals.calories) * 100);
+      document.getElementById("caloriesGoalText").textContent = `/ ${fetchedGoals.calories} kcal`;
+      document.querySelector(".calories-bar").style.setProperty("--value", (calories / fetchedGoals.calories) * 100);
     }
-
-    function updateWater(change) {
-      let progress = JSON.parse(localStorage.getItem("progress")) || { steps: 0, water: 0, calories: 0 };
-      let goals = JSON.parse(localStorage.getItem("goals")) || { steps: 1000, water: 8, calories: 500 };
-
-      progress.water = Math.max(0, Math.min(goals.water, progress.water + change));
-      localStorage.setItem("progress", JSON.stringify(progress));
-      loadGoalsAndProgress();
-    }
-
-
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
