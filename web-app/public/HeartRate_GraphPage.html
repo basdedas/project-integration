@@ -249,10 +249,10 @@
         console.log("Heart rate data loaded for current user:", data);
       }
 
-      heartChart.data.labels = data.date;
+      heartChart.data.labels = data.labels;
       heartChart.data.datasets = [{
         label: 'Heart Rate (bpm)',
-        data: values.health_type,
+        data: data.values,
         fill: true,
         backgroundColor: 'rgba(239, 83, 80, 0.2)',
         borderColor: '#ef5350',
