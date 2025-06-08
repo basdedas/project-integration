@@ -614,8 +614,6 @@ function remove_medication(medicationId) {
   };
       patientsContainer.appendChild(patientDiv);
 
-
-
       // Create dropdown option
       const option = document.createElement('option');
       option.value = patient.username;
@@ -634,31 +632,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function updateStats(patient) {
   try {
-    // Use the correct field name - might be user_id instead of id
-    const patientId = patient.user_id;
-    
-    // ADD DEBUGGING
-    console.log('Patient object in updateStats:', patient);
-    console.log('Using patient ID:', patientId);
-    
-    if (!patientId) {
-      console.error('No patient ID found in patient object');
-      setDefaultValues();
-      return;
-    }
-    
-    const response = await fetch(`https://integration-api2-hhftfvh6e7d6f3bm.westeurope-01.azurewebsites.net/api/healthpatients/${patientId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to fetch health data');
-    const data = await response.json(); // data is an array
-
-
-    // Find the latest entry by timestamp
-    const latest = data.reduce((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? a : b);
+    //Set the active patient 
+    localStorage.setItem('selectedPatient', JSON.stringify(patient));
+    updateMedication();
 
     const userEmail = patient.email;
     let latestHeartRate = await loadData('heart_rate', 'avg_day', userEmail);
@@ -695,9 +671,6 @@ async function updateStats(patient) {
 
     document.getElementById('oxygen').textContent = latestOxygen ?? 'N/A';
     document.getElementById('oxygen-status').textContent = oxygenStatus;
-
-    //Set the active patient 
-    localStorage.setItem('selectedPatient', JSON.stringify(patient));
   } catch (error) {
     console.error("Error updating stats:", error);
   }
