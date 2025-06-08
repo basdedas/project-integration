@@ -397,11 +397,27 @@
     renderDateInNL();
 
     async function loadGoalsAndProgress() {
-      const fetchedGoals = await loadData('metrics');
-      let steps = await loadData('steps', 'avg_day');
-      steps = steps.health_type;
-      let calories = await loadData('calories', 'avg_day');
-      calories = calories.health_type;
+
+      try{
+        const fetchedGoals = await loadData('metrics');
+      } catch (error) {
+        fetchedGoals = {
+          steps: 10000, // Default goal
+          calories: 2000 // Default goal
+        };
+        console.warn("Failed to fetch goals, using default values.");
+      }
+
+      try{
+        let steps = await loadData('steps', 'avg_day');
+        steps = steps.health_type;
+        let calories = await loadData('calories', 'avg_day');
+        calories = calories.health_type;
+      } catch (error) {
+        steps = 0;
+        calories = 0;
+        console.warn("Failed to fetch steps or calories data, defaulting to 0.");
+      }
 
       // Update Steps
       document.getElementById("stepsValue").textContent = steps;
@@ -530,9 +546,6 @@
         console.error("Error fetching heart rate data:", error);
       }
     }
-
-
-
   </script>
 
 </body>
