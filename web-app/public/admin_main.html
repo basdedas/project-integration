@@ -43,7 +43,7 @@
       border-radius: 10px;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: background 0.2s, transform 0.2s;
+      transition: 0.2s, transform 0.2s;
     }
     .patient-item:hover {
       background: #e3f2fd;
@@ -281,12 +281,11 @@
       <div class="icons" onclick="logout()">
         ⏻
       </div>
-      </div>
+    </div>
     <div class="layout">
        <div class="patients-list"> <h2>My Patients</h2>
         <h3 id="selectedPatient">Currently selected: </h3><br> 
-          <div id="patient-items-container">
-          </div>
+          <div id="patient-items-container"></div>
   
     <!-- Patient items will be inserted here dynamically -->
     <!-- ... existing circle bars ... -->
@@ -377,11 +376,15 @@
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
     
     const patients = document.querySelectorAll('.patient-item');
+    console.log("patients", patients);
     patients.forEach(patientDiv => {
+      console.log("patientDiv", patientDiv.textContent, selectedPatient.username);
       if (patientDiv.textContent === selectedPatient.username) {
         patientDiv.classList.add('active');
+        console.log("Active patient set:", selectedPatient.username);
       } else {
         patientDiv.classList.remove('active');
+        console.log("Removed active class from:", patientDiv.textContent);
       }
     });
   } else {
