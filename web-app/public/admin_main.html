@@ -369,9 +369,7 @@
   <script>    
   updateAppointments();  
   if (localStorage.getItem("selectedPatient")) {
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchAndDisplayPatients();
-    });
+    fetchAndDisplayPatients();
 
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
@@ -383,7 +381,7 @@
     console.log("patients", patients);
     patients.forEach(patientDiv => {
       console.log("patientDiv", patientDiv.textContent, selectedPatient.username);
-      if (patientDiv.textContent === selectedPatient.username) {
+      if (patientDiv.email === selectedPatient.email) {
         patientDiv.classList.add('active');
         console.log("Active patient set:", selectedPatient.username);
       } else {
@@ -674,6 +672,7 @@ function remove_medication(medicationId) {
       // Create patient div for sidebar
       const patientDiv = document.createElement('div');
       patientDiv.className = 'patient-item';
+      patientDiv.setAttribute('data-email', patient.email);
       patientDiv.textContent = patient.username;
       patientDiv.onclick = () => {
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
