@@ -344,6 +344,7 @@
       medList.innerHTML = '';
       meds.forEach(med => {
         let timeLeft = 'no end date set';
+        console.log("Processing medication:", med);
         if (!med.end_date == null || !med.end_date === '' || !med.end_date == undefined) {
           console.log("End date is set for medication:", med.med_name);
           timeLeft = getTimeUntil(med.end_date);
@@ -352,6 +353,7 @@
         }
         const p = document.createElement('p');
         p.style.margin = "5px 0";
+        p.style.cursor = "pointer";
         p.textContent = `${med.med_name} – Until ${timeLeft}`;
         medList.appendChild(p);
         p.addEventListener('click', () => {
