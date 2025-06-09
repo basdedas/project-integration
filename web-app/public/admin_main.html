@@ -764,11 +764,33 @@ async function loadGoalsAndProgress() {
   try{
     const patient = JSON.parse(localStorage.getItem('selectedPatient'));
 
-    const fetchedGoals = await loadData('metrics', '', patient.email);
-    let steps = await loadData('steps', 'avg_day', patient.email);
-    steps = steps.health_type;
-    let calories = await loadData('calories', 'avg_day', patient.email);
-    calories = calories.health_type;
+      let fetchedGoals;
+      try{
+        fetchedGoals = await loadData('metrics', '', patient.email);
+      } catch (error) {
+        fetchedGoals = {
+          steps: 10000, // Default goal
+          calories: 2000 // Default goal
+        };
+        console.warn("Failed to fetch goals, using default values.");
+      }
+      console.log("Fetched goals:", fetchedGoals);
+
+      let steps;
+      let calories;
+
+      try{
+        steps = await loadData('steps', 'avg_day', patient.email);
+        steps = steps.health_type;
+        calories = await loadData('calories', 'avg_day', patient.email);
+        calories = calories.health_type;
+      } catch (error) {
+        steps = 0;
+        calories = 0;
+        console.warn("Failed to fetch steps or calories data, defaulting to 0.");
+      }
+      console.log("Latest steps:", steps);
+      console.log("Latest calories:", calories);
 
     // Update Steps
     document.getElementById("stepsValue").textContent = steps;
