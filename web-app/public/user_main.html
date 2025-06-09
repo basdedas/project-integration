@@ -345,7 +345,7 @@
       meds.forEach(med => {
         let timeLeft = 'no end date set';
         console.log("Processing medication:", med);
-        if (!med.end_date == null || !med.end_date === '' || !med.end_date == undefined) {
+        if (med.end_date) {
           console.log("End date is set for medication:", med.med_name);
           timeLeft = getTimeUntil(med.end_date);
         } else {
@@ -404,7 +404,7 @@
     async function loadGoalsAndProgress() {
       let fetchedGoals;
       try{
-        const fetchedGoals = await loadData('metrics');
+        fetchedGoals = await loadData('metrics');
       } catch (error) {
         fetchedGoals = {
           steps: 10000, // Default goal
@@ -418,9 +418,9 @@
       let calories;
 
       try{
-        let steps = await loadData('steps', 'avg_day');
+        steps = await loadData('steps', 'avg_day');
         steps = steps.health_type;
-        let calories = await loadData('calories', 'avg_day');
+        calories = await loadData('calories', 'avg_day');
         calories = calories.health_type;
       } catch (error) {
         steps = 0;
