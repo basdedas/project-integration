@@ -371,7 +371,7 @@
 
   let selectedPatient = localStorage.getItem("selectedPatient");
   fetchAndDisplayPatients();
-  localStorage.setItem("selectedPatient", JSON.stringify(selectedPatient));
+  localStorage.setItem("selectedPatient", selectedPatient);
   if (selectedPatient) {
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
