@@ -375,7 +375,9 @@
     updateMedication();
     loadGoalsAndProgress();
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
-    array.forEach(patientDiv => {
+    
+    const patients = document.querySelectorAll('.patient-item');
+    patients.forEach(patientDiv => {
       if (patientDiv.textContent === selectedPatient.username) {
         patientDiv.classList.add('active');
       } else {
