@@ -765,14 +765,13 @@ async function loadGoalsAndProgress() {
     const patient = JSON.parse(localStorage.getItem('selectedPatient'));
 
       let fetchedGoals;
-      try{
+      try {
         fetchedGoals = await loadData('metrics', '', patient.email);
       } catch (error) {
-        fetchedGoals = {
-          steps: 10000, // Default goal
-          calories: 2000 // Default goal
-        };
         console.warn("Failed to fetch goals, using default values.");
+      }
+      if (!fetchedGoals) {
+        fetchedGoals = { steps: 10000, calories: 2000 }; // Default goals
       }
       console.log("Fetched goals:", fetchedGoals);
 
