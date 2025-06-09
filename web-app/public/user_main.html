@@ -402,7 +402,7 @@
     renderDateInNL();
 
     async function loadGoalsAndProgress() {
-
+      let fetchedGoals;
       try{
         const fetchedGoals = await loadData('metrics');
       } catch (error) {
@@ -412,6 +412,10 @@
         };
         console.warn("Failed to fetch goals, using default values.");
       }
+      console.log("Fetched goals:", fetchedGoals);
+
+      let steps;
+      let calories;
 
       try{
         let steps = await loadData('steps', 'avg_day');
@@ -423,6 +427,8 @@
         calories = 0;
         console.warn("Failed to fetch steps or calories data, defaulting to 0.");
       }
+      console.log("Latest steps:", steps);
+      console.log("Latest calories:", calories);
 
       // Update Steps
       document.getElementById("stepsValue").textContent = steps;
