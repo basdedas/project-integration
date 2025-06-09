@@ -693,7 +693,6 @@ async function updateStats(patient) {
       }
     });
     //Set the active patient 
-    localStorage.setItem('selectedPatient', JSON.stringify(patient));
     updateMedication();
     loadGoalsAndProgress();
 
