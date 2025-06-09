@@ -425,7 +425,7 @@ async function updateAppointments() {
       entry.className = "appointment-entry";
       entry.innerHTML = `
         <span>${appointment.username} – ${appointment.formatted_date} at ${appointment.formatted_date} for ${appointment.reason}\n Notes: ${appointment.notes}</span>
-        <button onclick="remove_appointment(${appointment.appointment_id})">Remove</button>
+        <button width="20%" onclick="remove_appointment(${appointment.appointment_id})">Remove</button>
       `;
       appointmentList.appendChild(entry);
     });
