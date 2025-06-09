@@ -831,9 +831,10 @@ logout = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  const selectedPatient = JSON.parse(localStorage.getItem('selectedPatient'));
   const healthCards = document.querySelectorAll('.card');
   healthCards.forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (event) => {
       if (!selectedPatient) {
         event.preventDefault();
         window.location.href = 'admin_main.html';
