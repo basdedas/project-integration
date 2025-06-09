@@ -376,19 +376,6 @@
     updateMedication();
     loadGoalsAndProgress();
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
-    
-    const patients = document.querySelectorAll('.patient-item');
-    console.log("patients", patients);
-    patients.forEach(patientDiv => {
-      console.log("patientDiv", patientDiv.textContent, selectedPatient.username);
-      if (patientDiv.email === selectedPatient.email) {
-        patientDiv.classList.add('active');
-        console.log("Active patient set:", selectedPatient.username);
-      } else {
-        patientDiv.classList.remove('active');
-        console.log("Removed active class from:", patientDiv.textContent);
-      }
-    });
   } else {
     setDefaultValues();
     document.getElementById('selectedPatient').textContent = `Currently no patient selected`;
@@ -675,9 +662,11 @@ function remove_medication(medicationId) {
       patientDiv.setAttribute('data-email', patient.email);
       patientDiv.textContent = patient.username;
       patientDiv.onclick = () => {
-    localStorage.setItem('selectedPatient', JSON.stringify(patient));
-    updateStats(patient); 
-  };
+        localStorage.setItem('selectedPatient', JSON.stringify(patient));
+        updateStats(patient); 
+        document.querySelectorAll('.patient-item').forEach(item => item.classList.remove('active'));
+        patientDiv.classList.add('active');
+      };
       patientsContainer.appendChild(patientDiv);
 
       // Create dropdown option
