@@ -265,6 +265,12 @@
   background-color: #42a5f5;
 }
 
+.patient-item.active {
+  background: #90caf9;
+  transform: translateY(-2px);
+  font-weight: bold;
+}
+
   </style>
 </head>
 <body>
@@ -278,7 +284,7 @@
       </div>
     <div class="layout">
        <div class="patients-list"> <h2>My Patients</h2>
-        <h3 id="selectedPatient">Currently selected: </h3> 
+        <h3 id="selectedPatient">Currently selected: </h3><br> 
           <div id="patient-items-container">
           </div>
   
@@ -369,6 +375,13 @@
     updateMedication();
     loadGoalsAndProgress();
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
+    array.forEach(patientDiv => {
+      if (patientDiv.textContent === selectedPatient.username) {
+        patientDiv.classList.add('active');
+      } else {
+        patientDiv.classList.remove('active');
+      }
+    });
   } else {
     setDefaultValues();
     document.getElementById('selectedPatient').textContent = `Currently no patient selected`;
