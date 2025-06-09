@@ -397,11 +397,9 @@
     renderDateInNL();
 
     async function loadGoalsAndProgress() {
-      let fetchedGoals;
-      let steps, calories;
 
       try{
-        fetchedGoals = await loadData('metrics');
+        const fetchedGoals = await loadData('metrics');
       } catch (error) {
         fetchedGoals = {
           steps: 10000, // Default goal
@@ -411,9 +409,9 @@
       }
 
       try{
-        steps = await loadData('steps', 'avg_day');
+        let steps = await loadData('steps', 'avg_day');
         steps = steps.health_type;
-        calories = await loadData('calories', 'avg_day');
+        let calories = await loadData('calories', 'avg_day');
         calories = calories.health_type;
       } catch (error) {
         steps = 0;

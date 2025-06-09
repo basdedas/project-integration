@@ -510,7 +510,7 @@ function updateMedication() {
         entry.className = "medication-entry";
         entry.setAttribute("data-med-id", med.med_name);
         entry.innerHTML = `
-          <span>${med.med_name} – Dosage: ${med.dosage} - Between ${med.begin_date} and ${med.end_date}. \n Notes: ${med.notes}</span>
+          <span>${med.med_name} – Dosage: ${med.dosage} - Between ${med.start_date} and ${med.end_date}. \n Notes: ${med.notes}</span>
           <button onclick="remove_medication('${med.med_name}')">Remove</button>
         `;
         medicationList.appendChild(entry);
