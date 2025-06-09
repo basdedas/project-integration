@@ -674,10 +674,7 @@ function remove_medication(medicationId) {
       option.textContent = patient.username;
       select.appendChild(option);
     })
-    document.querySelectorAll('.patient-item').forEach(item => item.classList.remove('active'));
-    if(localStorage.getItem('selectedPatient') && JSON.parse(localStorage.getItem('selectedPatient')).email === patient.email){ 
-      patientDiv.classList.add('active');
-    };
+
   } catch (error) {
     console.error('Error fetching patients:', error);
   }
@@ -686,7 +683,15 @@ function remove_medication(medicationId) {
 async function updateStats(patient) {
   try {
     document.getElementById('selectedPatient').textContent = `Currently selected:\n ${patient.username}`;
-
+    document.querySelectorAll('.patient-item').forEach(
+      item => item.classList.remove('active'),
+    );
+    const patientItems = document.querySelectorAll('.patient-item');
+    patientItems.forEach(item => {
+      if (item.getAttribute('data-email') === patient.email) {
+        item.classList.add('active');
+      }
+    });
     //Set the active patient 
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
     updateMedication();
