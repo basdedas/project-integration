@@ -294,7 +294,7 @@
         <div id="user-appointment">....</div>
       </div>
 
-      <a href="Medications.html" class="medications" style="text-decoration: none; color: inherit;">
+      <a class="medications" style="text-decoration: none; color: inherit;">
         <h2>Medications</h2>
         <div id="medList">
           <p>Loading...</p>
@@ -345,7 +345,10 @@
       meds.forEach(med => {
         let timeLeft = 'no end date set';
         if (!med.end_date == null || !med.end_date === '' || !med.end_date == undefined) {
+          console.log("End date is set for medication:", med.med_name);
           timeLeft = getTimeUntil(med.end_date);
+        } else {
+          console.log("End date is not set for medication:", med.med_name);
         }
         const p = document.createElement('p');
         p.style.margin = "5px 0";
