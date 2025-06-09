@@ -369,6 +369,10 @@
   <script>    
   updateAppointments();  
   if (localStorage.getItem("selectedPatient")) {
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchAndDisplayPatients();
+    });
+
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
     updateMedication();
@@ -687,11 +691,6 @@ function remove_medication(medicationId) {
     console.error('Error fetching patients:', error);
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetchAndDisplayPatients();
-});
-
 
 async function updateStats(patient) {
   try {
