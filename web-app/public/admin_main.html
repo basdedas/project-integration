@@ -367,20 +367,22 @@
   </div>
 
   <script>    
-  updateAppointments();  
+  async function initializeDashboard() {
+    await updateAppointments();  
 
-  let selectedPatient = localStorage.getItem("selectedPatient");
-  await fetchAndDisplayPatients();
-  localStorage.setItem("selectedPatient", selectedPatient);
-  if (selectedPatient) {
-    const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
-    updateStats(selectedPatient);
-    updateMedication();
-    loadGoalsAndProgress();
-    document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
-  } else {
-    setDefaultValues();
-    document.getElementById('selectedPatient').textContent = `Currently no patient selected`;
+    let selectedPatient = localStorage.getItem("selectedPatient");
+    await fetchAndDisplayPatients();
+    localStorage.setItem("selectedPatient", selectedPatient);
+    if (selectedPatient) {
+      const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
+      updateStats(selectedPatient);
+      updateMedication();
+      loadGoalsAndProgress();
+      document.getElementById('selectedPatient').textContent = `Currently selected:\n ${selectedPatient.username}`;
+    } else {
+      setDefaultValues();
+      document.getElementById('selectedPatient').textContent = `Currently no patient selected`;
+    }
   }
 
 function bookAppointment() {
