@@ -357,7 +357,7 @@
         p.textContent = `${med.med_name} – Until ${endDate}`;
         medList.appendChild(p);
         p.addEventListener('click', () => {
-          const medDetails = `Medication: ${med.med_name}\nDosage: ${med.dosage}\nBegin date: ${med.start_date}\nEnd Date: ${med.end_date || 'Not set'}\n Notes: ${med.notes || 'No notes'}`;
+          const medDetails = `Medication: ${med.med_name}\nDosage: ${med.dosage}\nBegin date: ${med.start_date}\nEnd Date: ${med.end_date || 'Not set'}\nNotes: ${med.notes || 'No notes'}`;
           alert(medDetails);
         });
       });
