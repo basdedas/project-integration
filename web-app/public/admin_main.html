@@ -664,10 +664,13 @@ function remove_medication(medicationId) {
       patientDiv.onclick = () => {
         localStorage.setItem('selectedPatient', JSON.stringify(patient));
         updateStats(patient); 
-        document.querySelectorAll('.patient-item').forEach(item => item.classList.remove('active'));
-        patientDiv.classList.add('active');
       };
+      document.querySelectorAll('.patient-item').forEach(item => item.classList.remove('active'));
       patientsContainer.appendChild(patientDiv);
+      if(localStorage.getItem('selectedPatient') && JSON.parse(localStorage.getItem('selectedPatient')).email === patient.email){ 
+        patientDiv.classList.add('active');
+        updateStats(patient);
+      }
 
       // Create dropdown option
       const option = document.createElement('option');
