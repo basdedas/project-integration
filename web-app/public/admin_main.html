@@ -368,9 +368,9 @@
 
   <script>    
   updateAppointments();  
-  if (localStorage.getItem("selectedPatient")) {
-    fetchAndDisplayPatients();
+  fetchAndDisplayPatients();
 
+  if (localStorage.getItem("selectedPatient")) {
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
     updateStats(selectedPatient);
     updateMedication();
@@ -669,8 +669,8 @@ function remove_medication(medicationId) {
       patientsContainer.appendChild(patientDiv);
       if(localStorage.getItem('selectedPatient') && JSON.parse(localStorage.getItem('selectedPatient')).email === patient.email){ 
         patientDiv.classList.add('active');
-        updateStats(patient);
       }
+      updateStats(patient);
 
       // Create dropdown option
       const option = document.createElement('option');
