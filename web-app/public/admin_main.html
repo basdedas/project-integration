@@ -370,7 +370,7 @@
   updateAppointments();  
 
   let selectedPatient = localStorage.getItem("selectedPatient");
-  fetchAndDisplayPatients();
+  await fetchAndDisplayPatients();
   localStorage.setItem("selectedPatient", selectedPatient);
   if (selectedPatient) {
     const selectedPatient = JSON.parse(localStorage.getItem("selectedPatient"));
@@ -668,7 +668,6 @@ function remove_medication(medicationId) {
         updateStats(patient); 
       };
       patientsContainer.appendChild(patientDiv);
-      updateStats(patient);
 
       // Create dropdown option
       const option = document.createElement('option');
