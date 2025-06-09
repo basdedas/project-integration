@@ -343,18 +343,18 @@
 
       medList.innerHTML = '';
       meds.forEach(med => {
-        let timeLeft = 'no end date set';
+        let endDate = 'no end date set';
         console.log("Processing medication:", med);
         if (med.end_date) {
           console.log("End date is set for medication:", med.med_name);
-          timeLeft = getTimeUntil(med.end_date);
+          endDate = med.end_date;
         } else {
           console.log("End date is not set for medication:", med.med_name);
         }
         const p = document.createElement('p');
         p.style.margin = "5px 0";
         p.style.cursor = "pointer";
-        p.textContent = `${med.med_name} – Until ${timeLeft}`;
+        p.textContent = `${med.med_name} – Until ${endDate}`;
         medList.appendChild(p);
         p.addEventListener('click', () => {
           const medDetails = `Medication: ${med.med_name}\nDosage: ${med.dosage}\nBegin date: ${med.start_date}\nEnd Date: ${med.end_date || 'Not set'}\n Notes: ${med.notes || 'No notes'}`;
@@ -362,44 +362,6 @@
         });
       });
     }
-
-
-    function getTimeUntil(targetTime) {
-      // Create Europe/Amsterdam timezone
-      const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
-      const [h, m] = targetTime.split(':');
-      const target = new Date(now);
-      target.setHours(h, m, 0, 0);
-
-      if (target < now) {
-        target.setDate(target.getDate() + 1); // move to next day if already passed
-      }
-
-      const diff = Math.floor((target - now) / 60000);
-      const hours = Math.floor(diff / 60);
-      const minutes = diff % 60;
-
-      return `${hours}h ${minutes}m`;
-    }
-
-    // Refresh every minute
-    setInterval(renderMedicationsInBubble, 60000);
-  </script>
-  <script>
-    function renderDateInNL() {
-      const now = new Date();
-      const nlDate = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Europe/Amsterdam',
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }).format(now);
-
-      document.getElementById('current-date').textContent = nlDate;
-    }
-
-    renderDateInNL();
 
     async function loadGoalsAndProgress() {
       let fetchedGoals;
