@@ -306,8 +306,8 @@
   </div>
   <script>
   
-    async function fetchUsername() {
-      await putDate();
+    function fetchUsername() {
+      putDate();
       const user = JSON.parse(localStorage.getItem('user'));
       const username = user ? user.username : 'User'; // Default to 'User' if not found
       document.getElementById('username').textContent = username;
@@ -335,7 +335,7 @@
       }
     }
 
-    async function putDate(){
+    function putDate(){
       const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: '2-digit',
@@ -495,9 +495,9 @@
           upcomingDiv.textContent = "No appointments found.";
         } else {
           const next = userAppointments[0];
-          upcomingDiv.textContent = `${next.appointment_date} – ${next.reason}`;
+          upcomingDiv.textContent = `${next.formatted_date} – ${next.reason}`;
           upcomingDiv.onclick = () => {
-            const appointmentDetails = `Appointment Details:\nReason: ${next.reason}\nDate: ${next.appointment_date}\nTime: ${next.appointment_time}\nNotes: ${next.notes}`;
+            const appointmentDetails = `Appointment Details:\nReason: ${next.reason}\nDate: ${next.formatted_date}\nTime: ${next.formatted_time_cast_datetime}\nNotes: ${next.notes}`;
             alert(appointmentDetails);
           };
         }
