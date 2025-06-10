@@ -495,9 +495,14 @@
           upcomingDiv.textContent = "No appointments found.";
         } else {
           const next = userAppointments[0];
-          upcomingDiv.textContent = `${next.formatted_date} – ${next.formatted_time_cast_datetime} ${next.reason}`;
+          const formattedDate = next.appointment_date;
+          const formattedTime = next.appointment_time;
+          const reason = next.reason || "No reason provided";
+          const notes = next.notes || "No notes provided";
+
+          upcomingDiv.textContent = `${formattedDate} – ${formattedTime} ${reason}`;
           upcomingDiv.onclick = () => {
-            const appointmentDetails = `Appointment Details:\nReason: ${next.reason}\nDate: ${next.formatted_date}\nTime: ${next.formatted_time_cast_datetime}\nNotes: ${next.notes}`;
+            const appointmentDetails = `Appointment Details:\nReason: ${reason}\nDate: ${formattedDate}\nTime: ${formattedTime}\nNotes: ${notes}`;
             alert(appointmentDetails);
           };
         }
