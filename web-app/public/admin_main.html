@@ -737,6 +737,17 @@ async function updateStats(patient) {
     document.getElementById('oxygen-status').textContent = oxygenStatus;
   } catch (error) {
     console.error("Error updating stats:", error);
+    document.getElementById('heart-rate').textContent =  'N/A';
+    document.getElementById('heart-status').textContent = '--';
+
+    document.getElementById('steps').textContent = 'N/A';
+    document.getElementById('steps-status').textContent = '--';
+
+    document.getElementById('temperature').textContent = 'N/A';
+    document.getElementById('temp-status').textContent = '--';
+
+    document.getElementById('oxygen').textContent = 'N/A';
+    document.getElementById('oxygen-status').textContent = '--';
   }
 }
 
