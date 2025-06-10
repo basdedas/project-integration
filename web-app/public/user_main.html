@@ -495,7 +495,7 @@
           upcomingDiv.textContent = "No appointments found.";
         } else {
           const next = userAppointments[0];
-          upcomingDiv.textContent = `${next.formatted_date} – ${next.reason}`;
+          upcomingDiv.textContent = `${next.formatted_date} – ${next.formatted_time_cast_datetime} ${next.reason}`;
           upcomingDiv.onclick = () => {
             const appointmentDetails = `Appointment Details:\nReason: ${next.reason}\nDate: ${next.formatted_date}\nTime: ${next.formatted_time_cast_datetime}\nNotes: ${next.notes}`;
             alert(appointmentDetails);
